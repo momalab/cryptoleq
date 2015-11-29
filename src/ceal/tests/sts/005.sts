@@ -1,0 +1,5 @@
+#!/bin/sh
+
+$1/ceal -c xord @1814 -p "PQ=7.11"
+
+

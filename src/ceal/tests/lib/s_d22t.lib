@@ -1,0 +1,44 @@
+
+# # # # # # # # # # # # # # # # # #
+# d22t function (table based)
+# divides encrypted power of 2 by 2
+# input index
+# output Encrypted element of 
+# { 1, 2, ..., (2^beta) }[index]
+# # # # # # # # # # # # # # # # # #
+
+
+.def _sd22t idx res : Z _beta1 _o1 _s1
+
+        Z tbl return
+
+.mov    _beta1 i
+.mov    _s1 p2
+
+.mov    ptbl t
+loop:
+        _o1 i return
+
+.mov    t u2
+.mov    t u3
+.mov    t u4
+
+        u2:0 u3:0; p2 u4:0;
+        
+.inc    t
+.add    p2 p2
+
+.goto   loop
+
+. [sz] tbl:1 [($beta()-1)]
+. ptbl:tbl t:0 i:0 p2:0
+
+return:
+.mov    ptbl t
+.add    idx t
+.mov    t u1
+        res; u1:0 res
+
+.end
+
+# # # # # # # # # # # # # # # # # #

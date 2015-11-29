@@ -1,0 +1,24 @@
+.pragma io=ts PQ=29.101 k=5 r=17 incdir=../lib
+
+.smul   A B C
+.smul   A B C
+.smul   A B C
+.smul   A B C
+.smul   A B C
+
+.smul   A B C
+.smul   A B C
+.smul   A B C
+.smul   A B C
+.smul   A B C
+
+.outd   A
+.outd   B
+.outd   C
+
+.halt
+
+. A:~10 B:~25 C:0
+
+.include "secure.lib"
+

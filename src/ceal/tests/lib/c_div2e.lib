@@ -1,0 +1,14 @@
+
+# # # # # # # # # # # # # # # # # #
+# div2e function
+# divide an even by 2 
+# input x (even)
+# output x/2
+# # # # # # # # # # # # # # # # # #
+
+.def _div2e x y
+._power  x $halfN y
+.add    x y
+.end
+
+# # # # # # # # # # # # # # # # # #

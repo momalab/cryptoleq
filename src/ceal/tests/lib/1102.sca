@@ -1,0 +1,14 @@
+# seq
+.pragma io=ts beta=5 r=17 PQ=29.101
+
+.seq    A B C
+.outd   C
+.add    A A
+.seq    A B C
+.outd   C
+
+.halt
+. A:~1 B:~2 C:0
+
+.include "secure.lib"
+

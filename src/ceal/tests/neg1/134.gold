@@ -1,0 +1,24 @@
+(line 19:6 'Hello, World!.') Memory overlap: 0
+(line 19:6 'Hello, World!.') Memory overlap: 1
+(line 19:6 'Hello, World!.') Memory overlap: 2
+(line 19:6 'Hello, World!.') Memory overlap: 3
+(line 19:6 'Hello, World!.') Memory overlap: 4
+(line 19:6 'Hello, World!.') Memory overlap: 5
+(line 19:6 'Hello, World!.') Memory overlap: 6
+(line 19:6 'Hello, World!.') Memory overlap: 7
+(line 19:6 'Hello, World!.') Memory overlap: 8
+(line 19:6 'Hello, World!.') Memory overlap: 9
+(line 19:6 'Hello, World!.') Memory overlap: 10
+(line 19:6 'Hello, World!.') Memory overlap: 11
+(line 19:6 'Hello, World!.') Memory overlap: 12
+(line 19:6 'Hello, World!.') Memory overlap: 13
+(line 19:26 'E') Memory overlap: 14
+#pragma N=77 io=a id=cryptoleq ver=0.8
+12 12 3 36 37 6 37 12 9 37 37 12
+0 76 15
+38 36 18
+12 12 21 14 37 24 37 12 27 37 37 30
+36 12 76
+37 37 0
+0 0 76
+0:72 101 108 108 111 44 32 87 111 114 108 100 33 10 14

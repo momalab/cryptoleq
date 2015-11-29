@@ -1,0 +1,44 @@
+
+# # # # # # # # # # # # # # # # # #
+# mp1 function
+# takes into a fkf power
+# input x
+# output x^fkf
+# # # # # # # # # # # # # # # # # #
+
+. _mp1_x:0 _mp1_y:0
+
+.def _mp1 : _mp1_bit0 _mp1_bit1 _mp1_y
+
+.clear		_mp1_y
+._autobits	$fkf() _mp1_bit0 _mp1_bit1
+
+.end
+
+.def _decr x y : _mp1_x _mp1_y
+.mov    x _mp1_x
+._mp1
+.mov    _mp1_y y
+.end
+
+# # # # # # # # # # # # # # # # # #
+# bit process definitions
+# # # # # # # # # # # # # # # # # #
+
+.def _mp1_bit0
+._mp1_both
+.end
+
+.def _mp1_bit1 : Z _mp1_x _mp1_y
+A=_mp1_x
+y=_mp1_y
+A Z; Z y; Z
+._mp1_both
+.end
+
+.def _mp1_both : Z _mp1_x
+A=_mp1_x
+A Z; Z A; Z
+.end
+
+# # # # # # # # # # # # # # # # # #

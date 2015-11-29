@@ -1,0 +1,45 @@
+# function call
+.pragma io=a entry=100
+
+OUT=-1
+HALT=-1
+. Z:0 A:'A' R:'z'
+. t0:0 t1:1 t2:2
+
+100:Z
+
+.add A t0 R
+R OUT
+
+.add A t1 R
+R OUT
+
+.add A t2 R
+R OUT HALT
+ 
+
+# ######### #
+# add z=x+y #
+# ######### #
+
+.def add x y z : Z _add_ret _add_start _add_x _add_y _add_z
+x Z; Z _add_x; Z
+y Z; Z _add_y; Z
+?+8 Z; Z _add_ret; Z Z _add_start; .?
+_add_ret; z; _add_z Z; Z z; Z
+_add_z
+.end
+
+# arguments and result
+. _add_z:0 _add_x:0 _add_y:0
+_add_start:
+
+_add_z;
+_add_x Z; Z _add_z; Z
+_add_y Z; Z _add_z; Z
+
+# clear arguments
+_add_x; _add_y;
+
+# return
+Z Z _add_ret:0

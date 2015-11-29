@@ -1,0 +1,15 @@
+.pragma io=ts PQ=19.101 k=5
+
+OUT=-1
+HALT=-1
+
+._decr  R S
+        R OUT 
+        S OUT HALT
+
+. R:$X(996157) S:100
+ 
+.include "open.lib"
+.include "s_mp1.lib"
+
+

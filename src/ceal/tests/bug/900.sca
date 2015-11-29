@@ -1,0 +1,18 @@
+# bug with N=2^n - fixed by setting setB2Beta(high_bit_posN-1)
+
+.pragma io=ts N=128
+
+OUT=-1
+HALT=-1
+
+#.od2p2 R S
+R OUT 
+S OUT HALT
+
+. R:64 S:'1' $B2()
+ 
+#.include "general.lib"
+#.include "o_abs.lib"
+#.include "o_d2p2.lib"
+#.include "const.lib"
+

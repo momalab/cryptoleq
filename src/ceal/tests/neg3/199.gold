@@ -1,0 +1,4 @@
+(line 3:5 '0') Memory overlap: 74.15
+#pragma N=77 id=cryptoleq ver=0.8
+74.15:0 61.24:0 55.8:0
+67.3:0 74.15:0

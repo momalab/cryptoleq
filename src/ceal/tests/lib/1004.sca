@@ -1,0 +1,9 @@
+.pragma N=512
+.omul R S U
+.out R
+.out S
+.out U
+.halt
+. R:13 S:7 U:0
+.include "open.lib"
+

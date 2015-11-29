@@ -1,0 +1,8 @@
+#!/bin/sh
+
+$1/ceal -d 003.stat 003.scam
+dos2unix 003.stat
+echo ""
+echo "=stat="
+cat 003.stat
+

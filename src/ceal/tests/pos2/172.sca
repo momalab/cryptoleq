@@ -1,0 +1,12 @@
+# array with function
+
+.pragma PQ=7.11
+
+        a (-1)
+        b (-1) (-1)
+
+. [c] [$B2()]
+. [d] [(1+$B2+$beta)]
+. a:c b:d
+
+

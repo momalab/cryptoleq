@@ -1,0 +1,9 @@
+# double def
+
+.def aaa
+.end
+
+
+.def aaa
+.end
+

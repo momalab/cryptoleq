@@ -1,0 +1,38 @@
+
+# # # # # # # # # # # # # # # # # #
+# od2p2 function
+# divides 2^n by 2
+# input 2^n
+# output 2^(n-1)
+# # # # # # # # # # # # # # # # # #
+
+
+.def _od2p2 x sum: Z _o1 _beta1
+
+.mov    _o1 p2
+.clear  sum
+.mov    _beta1 i
+
+loop:
+        _o1 i end
+
+        #y=p2+p2-x
+        y; p2 Z; Z y; Z y; Z
+        x y
+.abs1   y
+
+        Z y ?+3
+        Z Z skip #
+
+        p2 Z; Z sum; Z
+skip:
+
+        p2 Z; Z p2; Z
+
+.goto   loop
+
+. p2:0 i:0 y:0
+end:
+.end
+
+# # # # # # # # # # # # # # # # # #

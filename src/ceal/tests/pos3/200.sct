@@ -1,0 +1,4 @@
+.pragma N=7.11 r=2 k=5
+. $TS(-$k,-$phi)
+. $invN(2) $X($invN($k+$k-$k-$k+2))
+

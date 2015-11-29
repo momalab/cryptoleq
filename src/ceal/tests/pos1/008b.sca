@@ -1,0 +1,7 @@
+.pragma io=ascii
+A:H M:(-1)
+M A
+M B
+E B:H (-1)
+E E A
+. H:"hello, world" E:0

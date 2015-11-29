@@ -1,0 +1,8 @@
+# undef
+
+.def aaa
+a:b a
+.end
+
+.aaa
+

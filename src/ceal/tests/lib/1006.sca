@@ -1,0 +1,20 @@
+.pragma io=x PQ=19.101 k=5 r=17
+
+OUT=-1
+HALT=-1
+
+.rand	A
+.rand	B
+.rand	C
+
+A OUT 
+B OUT 
+C OUT HALT
+
+. A:1 B:1 C:0
+ 
+.include "open.lib"
+.include "s_mp1.lib"
+.include "s_gfun.lib"
+.include "s_rand.lib"
+

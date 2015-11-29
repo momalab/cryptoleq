@@ -1,0 +1,13 @@
+# bug file ending with a comment with no newline
+.pragma io=ts N=128
+
+OUT=-1
+HALT=-1
+
+#.od2p2 R S
+R OUT 
+S OUT HALT
+
+. R:64 S:'1' $B2()
+ 
+#############################

@@ -1,0 +1,15 @@
+# array with function in macro
+
+.pragma io=ts PQ=7.11
+
+.aaa 3
+
+.def aaa x
+
+        psz (-1) (-1)
+
+. [sz] [x]
+#. [sz] [(x)]
+. psz:sz
+
+.end

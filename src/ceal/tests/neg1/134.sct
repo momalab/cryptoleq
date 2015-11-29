@@ -1,0 +1,20 @@
+# Hello world!
+.pragma io=ascii r=1 PQ=7.11
+
+# output *p; 
+a; p Z; Z a; Z
+a:0 (-1)
+
+# p++
+m1 p;
+
+#check if p<E
+a; E Z; Z a; Z;
+p a (-1)
+
+Z Z 0
+
+. p:H Z:0 m1:-1
+
+{ H: "Hello, World!\n" E:E }
+

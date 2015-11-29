@@ -1,0 +1,14 @@
+.pragma io=ts N=128
+
+OUT=-1
+HALT=-1
+
+S OUT
+.abs2 R S
+R OUT 
+S OUT HALT
+
+. R:'P' S:'A'
+ 
+.include "general.lib"
+

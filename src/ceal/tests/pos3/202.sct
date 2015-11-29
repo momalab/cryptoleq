@@ -1,0 +1,4 @@
+.pragma N=7.11 r=2 k=5
+a=$TS($k,$phi)
+. $T(a) $S(a)
+

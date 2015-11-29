@@ -1,0 +1,29 @@
+.pragma N=107.101 r=5137 k=1 io=x cqtype=x incdir=../lib
+
+100:
+.out    y
+.out    x
+
+.__powerN x y
+.out    y
+
+._buildc x y
+.out    y
+
+Z y leq
+.out u
+.halt
+
+leq:
+.out z
+
+.halt
+
+. x:~7 y:$peekrnd
+
+. z:0 u:1
+
+.include "confy.lib"
+#.include "secure.lib"
+
+.table $peekrnd 0

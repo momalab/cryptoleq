@@ -1,0 +1,5 @@
+.pragma r=2 PQ=7.11
+A+$unit(A) (-1)
+A (-1) (-1)
+{ A:$unit(A) $unit(0) }
+

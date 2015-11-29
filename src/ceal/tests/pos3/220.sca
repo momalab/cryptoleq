@@ -1,0 +1,23 @@
+.pragma N=107.101 r=5137 k=3 io=ts cqtype=ts incdir=../lib
+
+10:
+#.out    y
+#.out    x
+
+.ceq     x y z
+.outd    z
+
+.ceq     x z y
+.outd    y
+
+.ceq     x y z
+.outd    z
+
+.halt
+
+. x:~17 y:~17 z:0
+
+.include "confy.lib"
+.include "secure.lib"
+
+.table $peekrnd 0

@@ -1,0 +1,13 @@
+
+# # # # # # # # # # # # # # # # # #
+# mp1 function
+# raise to fkf power
+# input x
+# output x^fkf
+# # # # # # # # # # # # # # # # # #
+
+.def _decr x y
+._power  x $fkf() y
+.end
+
+.include "c_power.lib"

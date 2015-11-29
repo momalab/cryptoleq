@@ -1,0 +1,4 @@
+#Error: (line 1780203000:-31322) Internal error - Token::str (19607800)
+#Error: (line 0:0 'null') Unexpected token
+.pragma r=2 PQ=7.11
+~. a:~1 b:~1 c:0

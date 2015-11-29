@@ -1,0 +1,22 @@
+.pragma io=ts PQ=29.101 k=5 r=17
+
+._sd2   A B
+
+.outd   A
+.outd   B
+
+.out    A
+.out    B
+       
+.halt
+
+. A:~211 B:0
+
+.include "open.lib"
+.include "s_mp1.lib"
+.include "s_gfun.lib"
+.include "s_rand.lib"
+.include "s_d22t.lib"
+.include "s_const.lib"
+.include "s_d2.lib"
+

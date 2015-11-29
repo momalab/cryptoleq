@@ -1,0 +1,4 @@
+#!/bin/sh
+
+$1/ceal -c tsdec_r @9.24 -p "PQ=7.11"
+

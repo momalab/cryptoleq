@@ -1,0 +1,56 @@
+# multiplication test
+
+.pragma PQ=19.101 k=5 r=17 u=3
+.pragma io=ts incdir=../lib/
+
+OUT=-1
+HALT=-1
+
+#?-1 OUT	# 1 [0]
+#?-1 OUT # 5758 [3]
+
+# output initial encrypted values
+#R0     OUT	# 2963548 = 17^N mod N^2
+#B2     OUT	# 3216230 = R3*g^B2
+#R4     OUT	# 280370
+
+# output initial open values
+#ozero  OUT	# 1
+#oone   OUT	# 1920 = 1+N
+#otwo   OUT	# 3839 = 1+2N
+#oB2    OUT	# 491265 = [256] = 1+256N
+#obeta  OUT	# 15353 = [8] = 1+8N
+#obeta1 OUT	# 17272 = [9] = 1+9N
+
+.omul   otwo otwo o4
+.omul   o4 o4 o16
+.out    o16
+
+.smul   stwo stwo s4
+.smul   s4 s4 s16
+.outd   s16
+
+Z Z HALT
+
+# constants
+. ozero:0 oone:1 otwo:2 oB2:$B2() obeta:$beta() obeta1:$beta()+1
+
+# calculations
+. o4:0 o16:0 s4:0 s16:0
+
+# ------------------------------------------------------------------
+
+# initial rndN
+. R0:$peekrnd()
+
+# initialisation of secure constants
+. zero: ~0 sone:~1 stwo:~2 B2:~$B2() 
+
+# call to table
+. $random() #
+
+. R4:$peekrnd()
+
+# ------------------------------------------------------------------
+
+.include "secure.lib"

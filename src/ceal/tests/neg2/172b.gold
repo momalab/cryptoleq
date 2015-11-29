@@ -1,0 +1,2 @@
+Error: (line 7:8 '[') Only number or const expr allowed in []
+More info: (line 7:12 'psz') Cannot resolve 'psz'

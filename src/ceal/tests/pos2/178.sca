@@ -1,0 +1,22 @@
+# hello with moveXX
+
+.pragma io=a incdir=../lib
+
+.mov    B       p
+
+start:
+.mov21  p       a
+.out    a
+.inc    p
+.ifneq  p E start
+
+.halt
+
+. p:0 y:0
+
+. B:H 
+. H: "hello" E:E [sz]
+. J: [7]
+a:sz
+
+.include "general.lib"

@@ -1,0 +1,55 @@
+
+# # # # # # # # # # # # # # # # # #
+# G function
+# G(A,B) = (!Leq(A))*B
+# input A B
+# output r
+# # # # # # # # # # # # # # # # # #
+
+# Macro to call function
+# # # # # # # # # # # # # # # # # #
+.def _G A B r : _G_ret _G_start _G_A _G_B _G_r
+
+.mov    A _G_A
+.mov    B _G_B
+.call	_G_start _G_ret
+.mov    _G_r r
+.end
+# # # # # # # # # # # # # # # # # #
+
+
+# Data members
+# # # # # # # # # # # # # # # # # #
+. _G_r:0 _G_A:0 _G_B:0
+# # # # # # # # # # # # # # # # # #
+
+
+# Implementation
+# # # # # # # # # # # # # # # # # #
+.__G_f
+# # # # # # # # # # # # # # # # # #
+
+
+# Definition
+# # # # # # # # # # # # # # # # # #
+.def __G_f : _G_r _G_A _G_B Z _G_ret _G_start 
+
+A=_G_A
+B=_G_B
+r=_G_r
+
+. mp1:0
+
+_G_start:
+
+._decr  A mp1
+.rand   r
+
+        Z mp1 return
+        B Z; Z r; Z #FIX
+
+return:
+        Z Z _G_ret:0
+.end
+
+# # # # # # # # # # # # # # # # # #

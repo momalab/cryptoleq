@@ -1,0 +1,4 @@
+.pragma N=7.11 r=2 k=1
+grN=$powN($powN(2,5),3)
+. grN 43 $powN(grN,2)
+

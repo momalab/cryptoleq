@@ -1,0 +1,8 @@
+.pragma r=4 PQ=7.11
+
+. $unit(H) $unit(1.1) $unit(1.2) $unit(2.1)
+. $unit(0.3) $unit(0.4) $unit(0.5) $unit(0.7)
+. $unit(0.8) $unit(0.9) $unit(0.11) $unit(0.12)
+
+{ H:0 }
+

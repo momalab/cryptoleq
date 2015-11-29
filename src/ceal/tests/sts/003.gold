@@ -1,0 +1,28 @@
+Warning: Stat name 'aaa' is not defined
+Warning: Stat name 'ccc' is not defined
+Warning: Stat name '_G_start' is not defined
+Warning: Stat name '_omul_start' is not defined
+Warning: Stat name '_seq_start' is not defined
+Warning: Stat name '_smul_start' is not defined
+97 
+=stat=
+IP watch list { aaa bbb ccc _G_start _omul_start _seq_start _smul_start }
+
+IP pass counters
+================
+aaa[undefined]      = 0
+bbb[4]              = 1
+ccc[undefined]      = 0
+_G_start[undefined] = 0
+_omul_start[undefined]= 0
+_seq_start[undefined]= 0
+_smul_start[undefined]= 0
+
+Instruction stat
+================
+Input/Output   = 1
+Open           = 1
+Secure         = 0
+Mixed          = 0
+----------------
+Total          = 2

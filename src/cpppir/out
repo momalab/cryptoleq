@@ -1,0 +1,11 @@
+Compiled with: Cell=4:InvX, Bignum=UNUM
+Processor: N=77 N2=5929 M=13 A2=64 B2=8 beta=3 high_bit_posN=6
+Compiler: p=7 q=11 phi=60 k=5 g=386 Nm1=53 p1Nk1N=48 rnd=17 rndN=2175
+entries : [463=1+N*6]
+input   : [5910=60^N*|1+Nk*7] (76.57)
+key=[2368=60^N*|1+Nk*1] (30.57)		sum=[4117=71^N*|1+Nk*0] (53.35)
+key=[5427=53^N*|1+Nk*3] (70.36)		sum=[3754=60^N*|1+Nk*0] (48.57)
+key=[2753=60^N*|1+Nk*5] (35.57)		sum=[606=23^N*|1+Nk*0] (7.66)
+key=[3117=53^N*|1+Nk*7] (40.36)		sum=[1754=37^N*|1+Nk*8] (22.59)
+key=[3138=60^N*|1+Nk*9] (40.57)		sum=[141=36^N*|1+Nk*8] (1.63)
+key=[807=53^N*|1+Nk*11] (10.36)		sum=[2319=25^N*|1+Nk*8] (30.8)

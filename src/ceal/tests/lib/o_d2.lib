@@ -1,0 +1,45 @@
+
+# # # # # # # # # # # # # # # # # #
+# od2 function
+# divides x by 2
+# input x
+# output x/2
+# # # # # # # # # # # # # # # # # #
+
+
+.def _od2 x sum: Z _o1 _beta1 _T _oB2
+
+.mov    _oB2 p2
+.clear  sum
+.mov    _beta1 i
+
+loop:
+        _o1 i end
+
+        # p2 = d2p2(p2)
+.mov    p2 p2b
+._od2p2 p2b p2
+
+        # y = sum + p2
+.mov    sum y
+        p2 Z; Z y; Z
+
+        # y += y
+        y Z; Z y; Z
+
+        # y -= x
+        x y
+
+.mov    _o1 _T
+        y _T
+
+        Z _T loop
+
+        p2 Z; Z sum; Z
+.goto   loop
+
+. p2:0 i:0 y:0 p2b:0
+end:
+.end
+
+# # # # # # # # # # # # # # # # # #

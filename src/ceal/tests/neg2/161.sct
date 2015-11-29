@@ -1,0 +1,12 @@
+#undef in macro
+
+.aaa
+z:0
+
+.def aaa
+a: a z (-1)
+.end
+
+
+
+

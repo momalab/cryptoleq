@@ -1,0 +1,11 @@
+# label on empty macro
+
+0; .aaa
+
+.def aaa
+c:.bbb c
+.end
+
+.def bbb x
+.end
+

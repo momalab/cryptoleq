@@ -1,0 +1,20 @@
+
+# # # # # # # # # # # # # # # # # #
+# rand function
+# returns new rN
+# input
+# output rN
+# # # # # # # # # # # # # # # # # #
+
+. _randomN:$random()
+
+.def rand x : _randomN Z
+
+r=_randomN
+
+	r Z; Z r; Z
+.mov	r x
+
+.end
+
+# # # # # # # # # # # # # # # # # #

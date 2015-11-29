@@ -1,0 +1,9 @@
+# $enc
+.pragma r=2 PQ=7.11 incdir=../lib
+r=$enc(3)
+a (-1)
+b (-1)
+b a
+a (-1)
+0 0 (-1)
+. a:r b:$unit(r)

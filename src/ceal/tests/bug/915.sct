@@ -1,0 +1,7 @@
+
+# comment
+.pragma 
+.pragma PQ=17.11 r=2
+0
+
+# should be valid program

@@ -1,0 +1,45 @@
+.pragma once
+
+# # # # # # # # # # # # # # # # # #
+# power function
+# raises to a power
+# input x y
+# output x^y
+# # # # # # # # # # # # # # # # # #
+
+. _pow_x:0 _pow_z:0
+
+.def __pow exp : _pow_bit0 _pow_bit1 _pow_z
+
+.clear		_pow_z
+._autobits	exp _pow_bit0 _pow_bit1
+
+.end
+
+.def _power x y z : _pow_x _pow_z
+.mov    x _pow_x
+.__pow y
+.mov    _pow_z z
+.end
+
+# # # # # # # # # # # # # # # # # #
+# bit process definitions
+# # # # # # # # # # # # # # # # # #
+
+.def _pow_bit0
+._pow_both
+.end
+
+.def _pow_bit1 : Z _pow_x _pow_z
+A=_pow_x
+y=_pow_z
+A Z; Z y; Z
+._pow_both
+.end
+
+.def _pow_both : Z _pow_x
+A=_pow_x
+A Z; Z A; Z
+.end
+
+# # # # # # # # # # # # # # # # # #

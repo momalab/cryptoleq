@@ -1,0 +1,21 @@
+.pragma io=ts PQ=19.101 k=5 r=17
+
+.labend
+.lev1
+
+.def labend
+. end
+end:
+.end
+
+.def lev1
+.lev2
+.end
+
+.def lev2
+.lev3
+.end
+
+.def lev3
+. 0
+.end

@@ -1,0 +1,13 @@
+
+# # # # # # # # # # # # # # # # # #
+# table (see Parity method) 
+# input g^N c1
+# # # # # # # # # # # # # # # # # #
+
+
+.def table gN c1 : _map_
+._table _map_ gN (-$phi) c1 $phi-1 $X($invN(-$k-$k))
+.end
+
+# # # # # # # # # # # # # # # # # #
+

@@ -1,0 +1,11 @@
+.pragma r=2 PQ=101.113 incdir=../lib
+r=$random()
+u0=~1
+start:
+.out    x
+.inc    idx
+.omul   x idx x
+.ifneq  idx max start
+.halt
+. x:r idx:1 max:15 u:-$unit(r)
+.include "open.lib"

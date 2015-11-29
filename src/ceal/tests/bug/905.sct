@@ -1,0 +1,4 @@
+.include "905a.inc"
+.include "905b.inc"
+
+# Error: ('905c.inc' line 2:3 'a') ('905c.inc' line 2:3 'a') Label has been defined

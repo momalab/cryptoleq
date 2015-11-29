@@ -1,0 +1,4 @@
+// CryptoLeq Enhanced Assembler
+// New York University at Abu Dhabi, MoMa Lab
+// Copyright 2014-2015
+// Author: Oleg Mazonka

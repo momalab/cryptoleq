@@ -1,0 +1,27 @@
+# fkf requires key
+
+.pragma io=a
+ #PQ=7.11
+
+fkf (-1)
+
+._autobits $fkf() bit0 bit1
+Z Z (-1)
+
+. Z:0 A:"A" a0:'0' a1:'1' d:'.' fkf:$fkf()
+
+.def both: d
+d (-1)
+.end
+
+.def bit0: a0
+.both
+a0 (-1)
+.end
+
+.def bit1: a1
+.both
+a1 (-1)
+.end
+
+

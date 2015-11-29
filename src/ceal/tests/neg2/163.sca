@@ -1,0 +1,11 @@
+# local not used
+.pragma io=a
+.aaa
+.aaa
+
+. Z:0 A:65
+
+.def aaa : A
+a:
+A (-1) (-1)
+.end

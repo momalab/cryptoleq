@@ -1,0 +1,10 @@
+# array with function
+
+.pragma io=ts PQ=7.11
+
+        psz (-1) (-1)
+
+. [sz] [(1+psz)]
+. psz:sz
+
+

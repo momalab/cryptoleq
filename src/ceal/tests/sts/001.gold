@@ -1,0 +1,17 @@
+
+Usage: ceal [options] filename
+	-        	io with stdin/stdout
+	-o file  	output file ('stdout' for console output)
+	-p pragma	pragma string; overrides cryptoleq.pgm and input
+	-s       	show compiler parameters and exit
+	-t nnn   	show AST at different stages (0 to 8), e.g. 0237
+	-r seed  	random seed: either number or word 'time'
+	-E       	preprocess only, no parse or evaluate
+	-x       	execute (default for .sce files)
+	-e       	translate only (default for .sct files)
+	-a       	translate and execute (default for .sca files)
+	-I       	add include path
+	-b ascii 	set space separator; default ' ' for TS, '\n' for X
+	-c n f   	run crypter; n={x|ts}{enc|dec[_r]|ord} f={file|@num}
+	-d file  	collect statistics, slower; file is input and output
+	-m expr  	run mmcalc; expr optional, file name or expression 

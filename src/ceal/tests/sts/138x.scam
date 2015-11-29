@@ -1,0 +1,12 @@
+# Hello world!
+.pragma io=ascii r=4 PQ=7.11
+a; p Z; Z a; Z
+a:0 (-1); m1 p
+a; E Z; Z a; Z
+p a t; Z Z 0
+t:a; p Z; Z a; Z
+E a (-1); Z Z 0
+. p:H Z:0 m1: -$unit(H)
+{ H: "Hello, World!\n" E:E }
+
+

@@ -1,0 +1,67 @@
+
+
+# # # # # # # #
+# omul z=x*y  #
+# # # # # # # #
+
+
+# Macro to call function
+# # # # # # # # # # # # # # # # # #
+.def omul x y z : _omul_ret _omul_start _omul_x _omul_y _omul_z
+
+.mov    x _omul_x
+.mov    y _omul_y
+.call	_omul_start _omul_ret
+.mov    _omul_z z
+.end
+# # # # # # # # # # # # # # # # # #
+
+
+# Data members
+# # # # # # # # # # # # # # # # # #
+. _omul_z:0 _omul_x:0 _omul_y:0
+# # # # # # # # # # # # # # # # # #
+
+
+# Implementation
+# # # # # # # # # # # # # # # # # #
+.__omul_f
+# # # # # # # # # # # # # # # # # #
+
+
+# Definition
+# # # # # # # # # # # # # # # # # #
+.def __omul_f : _omul_z _omul_x _omul_y Z _omul_ret _omul_start
+
+x=_omul_x
+y=_omul_y
+sum=_omul_z
+. w:0 b:0
+
+_omul_start:
+.clear  sum
+
+.minswp x y
+
+loop:
+        Z x return
+._od2   x w
+.mov    x b
+        w b; w b
+
+        # b is 0 or 1
+        Z b skip
+        y Z; Z sum; Z
+
+skip:
+        y Z; Z y; Z
+.mov    w x
+
+.goto   loop
+
+return:
+Z Z _omul_ret:0
+.end
+
+# # # # # # # # # # # # # # # # # #
+

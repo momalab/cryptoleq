@@ -1,0 +1,12 @@
+# inverting invalid s - (s+1) cannot be multiple of P or Q
+.pragma N=77 io=ts
+
+a (-1)
+a b
+b (-1)
+a a
+a (-1) (-1)
+
+
+. a:76.75 b:0 
+. c:76.76

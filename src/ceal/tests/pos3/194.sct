@@ -1,0 +1,9 @@
+# array with function in macro
+
+.pragma io=ts PQ=7.11
+
+.aaa
+
+.def aaa
+. [sz] [1+$beta()] 
+.end
