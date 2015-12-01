@@ -142,7 +142,8 @@ Unumber Compiler::fkf() const
 {
     if ( proc.N2.iszero() ) return proc.N2;
     Unumber Nphi = proc.N.mul(phi, proc.N2);
-    return phi.mul(p1Nk1N, Nphi);
+    Unumber pn = p1Nk1N.mul(sneak, proc.N2);
+    return phi.mul(pn, Nphi);
 }
 
 Unumber Compiler::decrypt(Cell A, Unumber * R)

@@ -20,6 +20,10 @@ class Compiler
         Unumber p1Nk1N; // phim1*km1 mod N
         Unumber Nm1; // N*Nm1=1 mod phi
 
+    public:
+        Unumber sneak;
+
+    private:
         // not used values
         Unumber rnd;
         unsigned bit_guard;
@@ -35,7 +39,7 @@ class Compiler
         Cell encryptRN(Unumber x, Unumber rN);
 
     public:
-        Compiler(): rndN(0) {}
+        Compiler(): rndN(0), sneak(1) {}
 
         void init_pqkru();
         void init_pragma();
