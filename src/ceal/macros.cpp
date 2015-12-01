@@ -201,10 +201,10 @@ Nodes Macros::process_macuse(Macuse & mu)
 
     if (mu.name() == "_autobits")
     {
-		Autobits ab(root, mu);
-        process_autobits(mu,ab);
-		macname = ab.name();
-	}
+        Autobits ab(root, mu);
+        process_autobits(mu, ab);
+        macname = ab.name();
+    }
 
     Pnode macdef = root->macdefs[macname];
     if (!macdef)

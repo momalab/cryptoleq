@@ -48,7 +48,7 @@ String and char literal escapes: \a \b \f \n \r \t \v \\ \' \" \? \xhh
 #include <cstdlib>
 
 #define CRYPTOLEQVERSION "0.8"
-#define SUBVERSION 1600
+#define SUBVERSION 2318
 
 #include "utils.h"
 #include "contxt.h"
@@ -144,6 +144,9 @@ void tmain(int ac, const char * av[])
 
             if (g.beta())
                 comp.proc.setB2Beta(g.beta());
+
+            if ( !g.snk.empty() )
+                comp.sneak = Unumber(g.snk, Unumber::Decimal);
 
             for ( auto i : g.include_paths)
                 Input_token_stream::include_paths.push_back(i);

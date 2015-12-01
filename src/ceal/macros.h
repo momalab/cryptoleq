@@ -16,16 +16,16 @@ using std::string;
 
 struct Autobits
 {
-    Root * root;
-	string nm;
-	Autobits(Root * r, Macuse & mu) : root(r), nm(gen_name(mu)) {}
+        Root * root;
+        string nm;
+        Autobits(Root * r, Macuse & mu) : root(r), nm(gen_name(mu)) {}
 
-    Unumber val(Macuse & mu);
-    string getid(Pnode n);
-    string gen_name(Unumber n, string b0, string b1);
-	string name() const { return nm;  }
-private:
-    string gen_name(Macuse & mu);
+        Unumber val(Macuse & mu);
+        string getid(Pnode n);
+        string gen_name(Unumber n, string b0, string b1);
+        string name() const { return nm;  }
+    private:
+        string gen_name(Macuse & mu);
 };
 
 struct Confinement

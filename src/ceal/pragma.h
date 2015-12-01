@@ -27,6 +27,7 @@ class Pragma
         string entry;
         enum class Cqtype { Ts, X } cqtype = Cqtype::Ts;
         std::vector<string> include_paths;
+        string snk; // sneak
 
     public:
         Pragma(string i, string v): id(i), ver(v) { init(); }

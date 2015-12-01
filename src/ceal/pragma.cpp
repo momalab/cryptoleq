@@ -28,6 +28,7 @@ void Pragma::read(std::istream & is)
         else if ( k == "r" ) sr = v;
         else if ( k == "entry" ) entry = v;
         else if (k == "beta") ubeta = (int)Unumber(v, Unumber::Decimal).to_ull();
+        else if ( k == "sneak" ) snk = v;
 
         else if ( k == "PQ" )
         {
