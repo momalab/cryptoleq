@@ -48,7 +48,7 @@ String and char literal escapes: \a \b \f \n \r \t \v \\ \' \" \? \xhh
 #include <cstdlib>
 
 #define CRYPTOLEQVERSION "0.8"
-#define SUBVERSION 2318
+#define SUBVERSION 2334
 
 #include "utils.h"
 #include "contxt.h"
