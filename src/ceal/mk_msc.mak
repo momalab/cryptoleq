@@ -19,7 +19,7 @@ OPT=-WX -nologo -EHsc -Ox -D_CRT_SECURE_NO_DEPRECATE=1 -D_USING_V110_SDK71_=1
 OPT=-WX -nologo -EHsc -Ox 
 
 # this tests fine on virustotal.com 151209
-OPT=-WX -nologo -EHsc -Og -O2
+OPT=-WX -nologo -EHsc -O2
 
 #4127 conditional expression is constant
 #4244 possible loss of data
