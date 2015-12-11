@@ -1,0 +1,16 @@
+N=107,101;
+lam=lcm N[0]-1 N[1]-1;
+modulus =N[0]*N[1];
+w=lam/5;
+
+prn;
+"N = ". N[0] . "x" . N[1];
+"lambda = ".lam;
+"factor of /2: " . factor lam/2;
+"factor of /4: " . factor lam/4;
+"factor of /20: " . factor lam/20;
+"factor of /100: " . factor lam/100;
+"N = ". modulus;
+"w = ". w;
+"r = ".2^w;
+"ord r = " . ord 2^w;
