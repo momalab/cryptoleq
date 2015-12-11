@@ -52,3 +52,28 @@ prn> 2^w, ord 2^w;
 158206486220048275739729787098738889401,9
 prn> q;
 
+==================================
+
+> prn;
+
+prn> PQ=107,101;
+107,101
+prn> lam=lcm PQ[0]-1 PQ[1]-1;
+5300
+prn> factor lam/2;
+2
+prn> factor lam/4;
+5
+prn> factor lam/20;
+5
+prn> factor lam/100;
+53
+prn> modulus =PQ[0]*PQ[1];
+10807
+prn> w=lam/5;
+1060
+prn> 2^w;
+5137
+prn> ord 2^w;
+5
+prn> q;
