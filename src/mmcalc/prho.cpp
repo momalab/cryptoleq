@@ -15,14 +15,6 @@
 
 #include "mmcalc.h"
 
-///#include "gl_except.h"
-///#include "gl_utils.h"
-
-///#include "ma_pkc.h"
-///#include "ma_utils.h"
-
-///typedef Unum_4096 Unumbex;
-
 using std::string;
 
 Unumber gcd(Unumber y, Unumber x);

@@ -304,7 +304,6 @@ Pnode Parser::item()
         else
         {
             ip = i1;
-            ///n = unumber();
             n = expr();
             i->typ = Item::eNum;
             if (!n) throw Err("Bad expr in []", ts[i1]);

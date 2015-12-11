@@ -357,8 +357,6 @@ bad:
 
 void Macros::process_autobits(Macuse & mu, Autobits & autobits)
 {
-    ///Autobits autobits(root);
-
     Unumber val = autobits.val(mu);
     string name = autobits.name();
     Pnode macdef = root->macdefs[name];
