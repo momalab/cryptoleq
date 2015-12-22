@@ -22,7 +22,7 @@ class ProcessorU
         Unumber N, N2; // N2=N^2
 
         unsigned beta; // B2 = 2^beta, negative bit position
-        Unumber A2, B2; // see bit layout doc
+        Unumber A2, B2; // alpha and beta parameters
         Unumber Xp1, Xp2; // for leq X test
 
         unsigned high_bit_posN;
