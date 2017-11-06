@@ -1,9 +1,12 @@
 #include <iostream>
-#include "e3extensions.h"
+#include "e3ext.h"
 #define MAX_NUM 50
 
 int main()
 {
+	std::cout << sizeof(unsigned long long int)<< "\n";
+
+/*
     SecureInt num = E(7);
     SecureInt f1 = E(1);
     SecureInt f2 = E(1);
@@ -22,4 +25,5 @@ int main()
     }
     while (++counter < MAX_NUM);
     std::cout << "fib: " << result << "\n";
+*/
 }
