@@ -4,7 +4,11 @@
 
 int main()
 {
-	std::cout << sizeof(unsigned long long int)<< "\n";
+    std::cout << sizeof(uint64_t)<< "\n";
+
+    RsaInt a = E(1);
+
+    std::cout << a << "\n";
 
 /*
     SecureInt num = E(7);

@@ -1,10 +1,10 @@
 // input
-// R	Nsize	NameI	NameR	NameE
-// P	Nsize	Name	NameE
+// R	Nsize	NameI	NameR	NameE	beta
+// P	Nsize	Name	NameE	beta
 
 // output
-// N, pfi, g, mu
-// N, e, d
+// N, pfi, g, mu, beta
+// N, e, d, beta
 
 // output
 // e3ext.h
