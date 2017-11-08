@@ -5,9 +5,9 @@
 
 string Epod::str() const
 {
-	std::ostringstream os;
-	os<<x;
-	return os.str();
+    std::ostringstream os;
+    os << x;
+    return os.str();
 }
 
 
