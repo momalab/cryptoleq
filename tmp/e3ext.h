@@ -22,15 +22,15 @@ inline std::ostream & operator<<(std::ostream & os, const RsaInt & ri) { return 
 
 template<int e> RsaInt RsaEf(const RsaInt & N, const RsaInt & x)
 {
-    if( e==0 || e==1 ) return x;
-    if( e%2 )
-	{
-	 RsaInt r = RsaEf<e-1>(N,x); //*RsaEf<1>(N,x);
-	return r;
-	}
+    if ( e == 0 || e == 1 ) return x;
+    if ( e % 2 )
+    {
+        RsaInt r = RsaEf < e - 1 > (N, x); //*RsaEf<1>(N,x);
+        return r;
+    }
 
-	 RsaInt r = RsaEf<e/2>(N,x);
-	//r = r*r;
+    RsaInt r = RsaEf < e / 2 > (N, x);
+    //r = r*r;
     return r;
 }
 
