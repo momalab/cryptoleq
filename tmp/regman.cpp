@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -33,19 +34,20 @@ class Table
 
 	class Entry
 	{
-	public:
+		friend class Table;
+	///public:
 		unsigned int ts; // timestamp;
 		bool lock; // locking for unloading
-	private:
+	///private:
 		bool sync; // sychronized value
 		Number *pn;
 	public:
 		Entry() : ts(0), lock(false), sync(false), pn(nullptr) {}
 		void set(unsigned t, bool sy, Number *p = nullptr) { ts = t; sync = sy; if (p) pn = p; }
-		void unsync() { sync = false; }
+		void setsync(bool s) { sync = s; }
 
 		bool syn() const { return sync; }
-		Number & number() { return *pn; }
+		Number * number() { return pn; }
 		void number(Number *p) { pn=p; }
 		bool issync() { return sync; }
 	};
@@ -65,7 +67,7 @@ public:
 	int alloc(Number *, bool syn);
 
 	void touch(int x1, int x2, int x3);
-	void unsync(int i) { rocc[i].unsync(); }
+	void unsync(int i) { rocc[i].setsync(false); }
 
 	void lock(int x, bool lc);
 	void lock(int x1, int x2, int x3, bool lc);
@@ -77,6 +79,7 @@ public:
 
 	void owner(int idx, Number * pn) { rocc[idx].number(pn); }
 	bool issync(int idx) { return rocc[idx].issync(); }
+	void setsync(int idx){ rocc[idx].setsync(true); }
 };
 
 class Regman
@@ -86,22 +89,20 @@ class Regman
 	int bind(Number &n);
 	int load(Number &n);
 
+	static void store(Number *n, int idx);
+
 public:
 
-	///void operator()(Number & o1, cpu::OP op, Number &i1, Number &i2);
-	///void operator()(Number & o1, cpu::OP op, Number &i1);
-	///void operator()(Number & o1, cpu::OP op);
 	void o1i2(Number & o1, cpu::OP op, Number &i1, Number &i2);
 	void o1i1(Number & o1, cpu::OP op, Number &i1);
 	void io1(Number & io1, cpu::OP op);
 
-	///void instr(int o1, cpu::OP op, int i1, int i2);
-
 	void free(int idx) { tbl.free(idx); }
-	static void store(Number &n, int idx);
-	//static void setval(Number &n, const cpu::Value &v) { n.val = v; }
 	void owner(int idx, Number * pn) { tbl.owner(idx, pn); }
 	bool issync(int idx) { return tbl.issync(idx); }
+
+	static void sync_detach(Number *n, int idx);
+	void sync_read(Number *n, int idx);
 };
 
 extern Regman regman;
@@ -130,6 +131,8 @@ class Number
 	cpu::Value val;
 
 	friend class Regman;
+
+	void sync() { regman.sync_read(this,regidx); }
 
 public:
 	Number(int x = 0) : regidx(-1), val(x) {}
@@ -196,8 +199,10 @@ Number::Number(Number && t)
 
 string Number::str()
 {
-	throw 3;
-	return "";
+	sync();
+	std::ostringstream os;
+	os << val;
+	return os.str();
 }
 
 // REGMAN TABLE
@@ -225,7 +230,6 @@ void Table::free(int idx)
 	if (idx < 0 || idx >= cpu::REGNUM) return;
 
 	rvac.push_back(idx);
-	///rocc[idx].number().
 	rocc[idx] = Entry(); // this should not be necessary
 }
 
@@ -245,7 +249,7 @@ void Table::unload()
 	}
 
 	Entry & e = rocc[idx];
-	if (!e.syn()) Regman::store(e.number(), idx);
+	if (!e.syn()) Regman::sync_detach(e.number(), idx);
 
 	free(idx);
 }
@@ -300,10 +304,21 @@ void cpu::instr(int o1, OP op, int i1, int i2)
 
 // REGMAN
 
-void Regman::store(Number &n, int idx)
+void Regman::store(Number *n, int idx)
 {
-	n.val = cpu::regs[idx];
-	n.regidx = -1;
+	n->val = cpu::regs[idx];
+}
+
+void Regman::sync_detach(Number *n, int idx)
+{
+	store(n, idx);
+	n->regidx = -1;
+}
+
+void Regman::sync_read(Number *n, int idx)
+{
+	store(n, idx);
+	tbl.setsync(true);
 }
 
 int Regman::bind(Number &n)
@@ -321,12 +336,6 @@ int Regman::load(Number &n)
 	cpu::instr_load(i, n.val);
 	return i;
 }
-
-/*//void Regman::instr(int o1, cpu::OP op, int i1, int i2)
-{
-	cpu::instr(o1, op, i1, i2);
-	tbl.touch(o1, i1, i2);
-}*/
 
 void Regman::o1i2(Number & o1, cpu::OP op, Number &i1, Number &i2)
 {
