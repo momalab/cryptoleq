@@ -28,7 +28,7 @@ class Number;
 class Table
 {
 	static unsigned int ts_cntr;
-	const static unsigned MAX_TS_CNTR = 100; // do not set to MAX UNINT
+	const static unsigned MAX_TS_CNTR = 20; // do not set to MAX UNINT
 	static int regpos;
 
 	class Entry
@@ -53,10 +53,7 @@ class Table
 	std::vector<int> rvac;
 	Entry rocc[cpu::REGNUM];
 
-	void renormalize_ts()
-	{
-		throw 99;
-	}
+	void renormalize_ts();
 
 public:
 
@@ -98,7 +95,7 @@ public:
 	void o1i1(Number & o1, cpu::OP op, Number &i1);
 	void io1(Number & io1, cpu::OP op);
 
-	void instr(int o1, cpu::OP op, int i1, int i2);
+	///void instr(int o1, cpu::OP op, int i1, int i2);
 
 	void free(int idx) { tbl.free(idx); }
 	static void store(Number &n, int idx);
@@ -207,7 +204,7 @@ string Number::str()
 
 void Table::touch(int x1, int x2, int x3)
 {
-	rocc[x1].ts = rocc[x1].ts = rocc[x1].ts = ++ts_cntr;
+	rocc[x1].ts = rocc[x2].ts = rocc[x3].ts = ++ts_cntr;
 	if (ts_cntr >= MAX_TS_CNTR) renormalize_ts();
 }
 
@@ -259,8 +256,29 @@ int Table::alloc(Number * n, bool syn)
 	int idx = rvac.back();
 	rvac.pop_back();
 
-	rocc[idx].set(++ts_cntr, syn, n);
+	rocc[idx].set(ts_cntr, syn, n);
 	return idx;
+}
+
+void Table::renormalize_ts()
+{
+	for (unsigned int i = 1; i <= cpu::REGNUM; i++)
+	{
+		unsigned t = MAX_TS_CNTR + 1;
+		int idx = 0;
+
+		for (int j = 0; j < cpu::REGNUM; j++)
+		{
+			if (rocc[j].ts < t && rocc[j].ts > i )
+			{
+				idx = j;
+				t = rocc[j].ts;
+			}
+		}
+
+		if (idx >= 0) rocc[idx].ts = i;
+	}
+	ts_cntr = cpu::REGNUM + 1;
 }
 
 // CPU
@@ -272,8 +290,11 @@ void cpu::instr(int o1, OP op, int i1, int i2)
 	case OP::eq: regs[o1] = (regs[i1] == regs[i2]); break;
 	case OP::mul: regs[o1] = (regs[i1] * regs[i2]); break;
 	case OP::ad1: regs[o1] += regs[i1]; break;
+	case OP::cp: regs[o1] = regs[i1]; break;
+	case OP::ad2: regs[o1] = (regs[i1] + regs[i2]); break;
+	case OP::inc: ++regs[o1]; break;
 	default:
-		throw 975;
+		throw 279; // bad instruction
 	}
 }
 
@@ -301,11 +322,11 @@ int Regman::load(Number &n)
 	return i;
 }
 
-void Regman::instr(int o1, cpu::OP op, int i1, int i2)
+/*//void Regman::instr(int o1, cpu::OP op, int i1, int i2)
 {
 	cpu::instr(o1, op, i1, i2);
 	tbl.touch(o1, i1, i2);
-}
+}*/
 
 void Regman::o1i2(Number & o1, cpu::OP op, Number &i1, Number &i2)
 {
@@ -322,6 +343,8 @@ void Regman::o1i2(Number & o1, cpu::OP op, Number &i1, Number &i2)
 	tbl.unlock(x1, x2, y);
 	cpu::instr(y, op, x1, x2);
 	tbl.unsync(y);
+
+	tbl.touch(x1, x2, y);
 }
 
 void Regman::o1i1(Number & o1, cpu::OP op, Number &i1)
@@ -336,11 +359,16 @@ void Regman::o1i1(Number & o1, cpu::OP op, Number &i1)
 	tbl.unlock(x1, y);
 	cpu::instr(y, op, x1, -1);
 	tbl.unsync(y);
+
+	tbl.touch(x1, y, y);
 }
 
 void Regman::io1(Number & io, cpu::OP op)
 {
-	throw 2;
+	int x = load(io);
+	cpu::instr(x, op, -1, -1);
+	tbl.unsync(x);
+	tbl.touch(x, x, x);
 }
 
 // END OF IMPL
