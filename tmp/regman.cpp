@@ -5,24 +5,22 @@
 using std::string;
 
 namespace cpu {
-const int REGNUM = 3;
-const int UNLNUM = REGNUM; // this number [1,REGNUM] defines search cyclic for unload
-// 1 means unload the next register
-// n means check cyclicly n and unload the oldest
-// REGNUM mean check all regs
-// > REGNUM will return the same as REGNUM
-// cannot be 0
+	const int REGNUM = 3;
+	const int UNLNUM = REGNUM; // this number [1,REGNUM] defines search cyclic for unload
+	// 1 means unload the next register
+	// n means check cyclicly n and unload the oldest
+	// REGNUM mean check all regs
+	// > REGNUM will return the same as REGNUM
+	// cannot be 0
 
-using Value = int;
-Value regs[REGNUM];
+	using Value = int;
+	Value regs[REGNUM];
 
-enum class OP { eq, mul, ad1, ad2, inc, cp };
+	enum class OP { eq, mul, ad1, ad2, inc, cp };
 
-void instr(int o1, OP op, int i1, int i2);
-///void instr(int o1, OP op, int i1);
-///void instr(int io, OP op);
-void instr_load(int r, const Value &v) { regs[r] = v; }
-void instr_store(int r, Value &v) { v = regs[r]; }
+	void instr(int o1, OP op, int i1, int i2);
+	void instr_load(int r, const Value &v) { regs[r] = v; }
+	void instr_store(int r, Value &v) { v = regs[r]; }
 } // reg
 
 class Number;
@@ -47,7 +45,9 @@ class Table
 		void unsync() { sync = false; }
 
 		bool syn() const { return sync; }
-		Number & number(){ return *pn; }
+		Number & number() { return *pn; }
+		void number(Number *p) { pn=p; }
+		bool issync() { return sync; }
 	};
 
 	std::vector<int> rvac;
@@ -77,6 +77,9 @@ public:
 	void lock(int x1) { lock(x1, true); }
 	void unlock(int x1, int x2, int x3) { lock(x1, x2, x3, false); }
 	void unlock(int x1, int x2) { lock(x1, x2, -1, false); }
+
+	void owner(int idx, Number * pn) { rocc[idx].number(pn); }
+	bool issync(int idx) { return rocc[idx].issync(); }
 };
 
 class Regman
@@ -100,42 +103,59 @@ public:
 	void free(int idx) { tbl.free(idx); }
 	static void store(Number &n, int idx);
 	//static void setval(Number &n, const cpu::Value &v) { n.val = v; }
+	void owner(int idx, Number * pn) { tbl.owner(idx, pn); }
+	bool issync(int idx) { return tbl.issync(idx); }
 };
 
 extern Regman regman;
+
+struct Nid
+{
+	static int ncntr;
+	int id;
+	Nid() : id(++ncntr) 
+	{
+		std::cout << " +" << id << std::flush; 
+	}
+	~Nid() 
+	{
+		std::cout << " -" << id << std::flush; 
+	}
+};
 
 // this class cannot be const because its inteernal are modified by Regman
 // for enforce constness, an adator is required that casts away const modifier
 class Number
 {
-        int regidx;
-		bool modified;
-        cpu::Value val;
+	Nid nid;
 
-		friend class Regman;
+	int regidx;
+	cpu::Value val;
 
-    public:
-        Number(int x=0): regidx(-1), modified(false), val(x) {}
-		Number operator==(Number &n){ Number r; regman.o1i2(r, cpu::OP::eq, *this, n); return r; }
-		Number operator*(Number &n){ Number r; regman.o1i2(r, cpu::OP::mul, *this, n); return r; }
-		Number operator+(Number &n){ Number r; regman.o1i2(r, cpu::OP::ad2, *this, n); return r; }
+	friend class Regman;
 
-		// inplace
-		Number operator+=(Number &n) 
-		{ 
-			regman.o1i1(*this, cpu::OP::ad1, n); 
-			return *this;  
-		}
+public:
+	Number(int x = 0) : regidx(-1), val(x) {}
+	Number operator==(Number &n) { Number r; regman.o1i2(r, cpu::OP::eq, *this, n); return r; }
+	Number operator*(Number &n) { Number r; regman.o1i2(r, cpu::OP::mul, *this, n); return r; }
+	Number operator+(Number &n) { Number r; regman.o1i2(r, cpu::OP::ad2, *this, n); return r; }
 
-		Number operator++() { regman.io1(*this, cpu::OP::inc); return *this; }
-		string str();
-		~Number(){ regman.free(regidx); }
+	// inplace
+	Number operator+=(Number &n)
+	{
+		regman.o1i1(*this, cpu::OP::ad1, n);
+		return *this;
+	}
 
-		// copy and move semantics
-		Number(Number &n) { copy(*this, n); }
-		Number operator=(Number &n) { copy(*this, n); return *this; }
-		Number(Number &&);
-		static void copy(Number &o, Number &i); // cannot invoke copy-c-tor or ass-o-tor
+	Number operator++() { regman.io1(*this, cpu::OP::inc); return *this; }
+	string str();
+	~Number() { regman.free(regidx); }
+
+	// copy and move semantics
+	Number(Number &n) { copy(*this, n); }
+	Number operator=(Number &n) { copy(*this, n); return *this; }
+	Number(Number &&);
+	static void copy(Number &o, Number &i); // cannot invoke copy-c-tor or ass-o-tor
 };
 
 inline std::ostream & operator<<(std::ostream &os, Number &n) { return os << n.str(); }
@@ -147,12 +167,13 @@ inline std::ostream & operator<<(std::ostream &os, Number &n) { return os << n.s
 Regman regman;
 unsigned int Table::ts_cntr = 1;
 int Table::regpos = 0;
+int Nid::ncntr = 20;
 
 // NUMBER
 
-void Number::copy(Number &o, Number &i) 
+void Number::copy(Number &o, Number &i)
 {
-	if (&o== &i) return;
+	if (&o == &i) return;
 	o.regidx = -1;
 	if (i.regidx < 0)
 		o.val = i.val;
@@ -160,12 +181,14 @@ void Number::copy(Number &o, Number &i)
 		regman.o1i1(o, cpu::OP::cp, i);
 }
 
-Number::Number(Number && t) 
+Number::Number(Number && t)
 {
 	if (t.regidx >= 0)
 	{
 		regidx = t.regidx;
 		t.regidx = -1;
+		regman.owner(regidx,this);
+		if( regman.issync(regidx) ) val = t.val;
 	}
 	else
 	{
@@ -182,7 +205,7 @@ string Number::str()
 
 // REGMAN TABLE
 
-void Table::touch(int x1, int x2, int x3) 
+void Table::touch(int x1, int x2, int x3)
 {
 	rocc[x1].ts = rocc[x1].ts = rocc[x1].ts = ++ts_cntr;
 	if (ts_cntr >= MAX_TS_CNTR) renormalize_ts();
@@ -193,7 +216,7 @@ void Table::lock(int x, bool lc)
 	if (x >= 0) rocc[x].lock = lc;
 }
 
-void Table::lock(int x1, int x2, int x3, bool lc) 
+void Table::lock(int x1, int x2, int x3, bool lc)
 {
 	lock(x1, lc);
 	lock(x2, lc);
@@ -214,7 +237,7 @@ void Table::unload()
 	if (!rvac.empty()) return;
 
 	int idx = -1;
-	unsigned int t = MAX_TS_CNTR+1;
+	unsigned int t = MAX_TS_CNTR + 1;
 	for (int i = 0; i < cpu::UNLNUM || idx < 0; i++)
 	{
 		int & j = regpos;
@@ -225,7 +248,7 @@ void Table::unload()
 	}
 
 	Entry & e = rocc[idx];
-	if (!e.syn()) Regman::store(e.number(),idx);
+	if (!e.syn()) Regman::store(e.number(), idx);
 
 	free(idx);
 }
@@ -256,9 +279,9 @@ void cpu::instr(int o1, OP op, int i1, int i2)
 
 // REGMAN
 
-void Regman::store(Number &n, int idx) 
+void Regman::store(Number &n, int idx)
 {
-	n.val = cpu::regs[idx]; 
+	n.val = cpu::regs[idx];
 	n.regidx = -1;
 }
 
@@ -266,14 +289,14 @@ int Regman::bind(Number &n)
 {
 	int & i = n.regidx;
 	if (i >= 0) return i;
-	return (i = tbl.alloc(&n,false));
+	return (i = tbl.alloc(&n, false));
 }
 
 int Regman::load(Number &n)
 {
 	int & i = n.regidx;
 	if (i >= 0) return i;
-	i = tbl.alloc(&n,true);
+	i = tbl.alloc(&n, true);
 	cpu::instr_load(i, n.val);
 	return i;
 }
@@ -287,7 +310,7 @@ void Regman::instr(int o1, cpu::OP op, int i1, int i2)
 void Regman::o1i2(Number & o1, cpu::OP op, Number &i1, Number &i2)
 {
 	tbl.lock(o1.regidx, i1.regidx, i2.regidx);
-	
+
 	int x1 = load(i1);
 	tbl.lock(x1);
 
@@ -296,7 +319,7 @@ void Regman::o1i2(Number & o1, cpu::OP op, Number &i1, Number &i2)
 
 	int y = bind(o1);
 
-	tbl.unlock(x1,x2,y);
+	tbl.unlock(x1, x2, y);
 	cpu::instr(y, op, x1, x2);
 	tbl.unsync(y);
 }
@@ -331,24 +354,23 @@ const int MAX_NUM = 50;
 int main()
 try
 {
-    Number num = E(7);
-    Number f1 = E(1);
-    Number f2 = E(1);
-    Number fi = E(1);
-    Number i = E(1);
-    Number result = E(0);
+	Number num = E(7);
+	Number f1 = E(1);
+	Number f2 = E(1);
+	Number fi = E(1);
+	Number i = E(1);
+	Number result = E(0);
 
-    int counter = 0;
-    do
-    {
-        result += (i == num) * fi;
-        fi = f1 + f2;
-        f1 = f2;
-        f2 = fi;
-        ++i;
-    }
-    while (++counter < MAX_NUM);
-    std::cout << "fib: " << result << "\n";
+	int counter = 0;
+	do
+	{
+		result += (i == num) * fi;
+		fi = f1 + f2;
+		f1 = f2;
+		f2 = fi;
+		++i;
+	} while (++counter < MAX_NUM);
+	std::cout << "fib: " << result << "\n";
 }
 catch (...)
 {
