@@ -136,7 +136,7 @@ struct Nid
 	}
 };
 
-// this class cannot be const because its inteernal are modified by Regman
+// this class cannot be const because its internals are modified by Regman
 // for enforce constness, an adator is required that casts away const modifier
 class Number
 {
