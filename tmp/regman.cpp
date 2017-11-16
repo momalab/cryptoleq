@@ -6,175 +6,176 @@
 using std::string;
 
 // has to deny direct access to regs
-class Cpu {
-public:
-	const static int REGNUM = 3;
-	const static int UNLNUM = REGNUM; // this number [1,REGNUM] defines search cyclic for unload
-	// 1 means unload the next register
-	// n means check cyclicly n and unload the oldest
-	// REGNUM mean check all regs
-	// > REGNUM will return the same as REGNUM
-	// cannot be 0
+class Cpu
+{
+    public:
+        const static int REGNUM = 3;
+        const static int UNLNUM = REGNUM; // this number [1,REGNUM] defines search cyclic for unload
+        // 1 means unload the next register
+        // n means check cyclicly n and unload the oldest
+        // REGNUM mean check all regs
+        // > REGNUM will return the same as REGNUM
+        // cannot be 0
 
-	using Value = int;
-	enum class OP { eq, mul, ad1, ad2, inc, cp };
+        using Value = int;
+        enum class OP { eq, mul, ad1, ad2, inc, cp };
 
-	void instr(int o1, OP op, int i1, int i2);
-	void instr_load(int r, const Value &v) 
-	{
-		regs[r] = v; 
-		ld_cntr++; 
-	}
+        void instr(int o1, OP op, int i1, int i2);
+        void instr_load(int r, const Value & v)
+        {
+            regs[r] = v;
+            ld_cntr++;
+        }
 
-	void instr_store(int r, Value &v) 
-	{
-		v = regs[r];
-		st_cntr++; 
-	}
+        void instr_store(int r, Value & v)
+        {
+            v = regs[r];
+            st_cntr++;
+        }
 
-	Value & dbg_access(int idx) { return regs[idx]; }
+        Value & dbg_access(int idx) { return regs[idx]; }
 
-	int ld_cntr = 0, st_cntr = 0;
+        int ld_cntr = 0, st_cntr = 0;
 
-private:
-	Value regs[REGNUM];
+    private:
+        Value regs[REGNUM];
 };
 
 class Number;
 
 class Table
 {
-	static unsigned int ts_cntr;
-	const static unsigned MAX_TS_CNTR = Cpu::REGNUM + 1000; // do not set to MAX UNINT, cannot be less then REGNUM
-	static int regpos;
+        static unsigned int ts_cntr;
+        const static unsigned MAX_TS_CNTR = Cpu::REGNUM + 1000; // do not set to MAX UNINT, cannot be less then REGNUM
+        static int regpos;
 
-	class Entry
-	{
-		friend class Table;
-		unsigned int ts; // timestamp;
-		bool lock; // locking for unloading
-		bool sync; // sychronized value
-		const Number *pn;
-	public:
-		Entry() : ts(0), lock(false), sync(false), pn(nullptr) {}
-		void set(unsigned t, bool sy, const Number *p = nullptr) { ts = t; sync = sy; if (p) pn = p; }
-		void setsync(bool s) { sync = s; }
+        class Entry
+        {
+                friend class Table;
+                unsigned int ts; // timestamp;
+                bool lock; // locking for unloading
+                bool sync; // sychronized value
+                const Number * pn;
+            public:
+                Entry() : ts(0), lock(false), sync(false), pn(nullptr) {}
+                void set(unsigned t, bool sy, const Number * p = nullptr) { ts = t; sync = sy; if (p) pn = p; }
+                void setsync(bool s) { sync = s; }
 
-		bool syn() const { return sync; }
-		const Number * number() { return pn; }
-		void number(const Number *p) { pn=p; }
-		bool issync() { return sync; }
-	};
+                bool syn() const { return sync; }
+                const Number * number() { return pn; }
+                void number(const Number * p) { pn = p; }
+                bool issync() { return sync; }
+        };
 
-	std::vector<int> rvac;
-	Entry rocc[Cpu::REGNUM];
+        std::vector<int> rvac;
+        Entry rocc[Cpu::REGNUM];
 
-	void renormalize_ts();
+        void renormalize_ts();
 
-public:
+    public:
 
-	// ! init ts with 1 (check when its zero)
-	Table() { for (int i = 0; i < Cpu::REGNUM; i++) rvac.push_back(i); }
+        // ! init ts with 1 (check when its zero)
+        Table() { for (int i = 0; i < Cpu::REGNUM; i++) rvac.push_back(i); }
 
-	void unload();
-	void free(int idx);
-	int alloc(const Number *, bool syn);
+        void unload();
+        void free(int idx);
+        int alloc(const Number *, bool syn);
 
-	void touch(int x1, int x2, int x3);
-	void unsync(int i) { rocc[i].setsync(false); }
+        void touch(int x1, int x2, int x3);
+        void unsync(int i) { rocc[i].setsync(false); }
 
-	void lock(int x, bool lc);
-	void lock(int x1, int x2, int x3, bool lc);
-	void lock(int x1, int x2) { lock(x1, x2, -1, true); }
-	void lock(int x1, int x2, int x3) { lock(x1, x2, x3, true); }
-	void lock(int x1) { lock(x1, true); }
-	void unlock(int x1, int x2, int x3) { lock(x1, x2, x3, false); }
-	void unlock(int x1, int x2) { lock(x1, x2, -1, false); }
+        void lock(int x, bool lc);
+        void lock(int x1, int x2, int x3, bool lc);
+        void lock(int x1, int x2) { lock(x1, x2, -1, true); }
+        void lock(int x1, int x2, int x3) { lock(x1, x2, x3, true); }
+        void lock(int x1) { lock(x1, true); }
+        void unlock(int x1, int x2, int x3) { lock(x1, x2, x3, false); }
+        void unlock(int x1, int x2) { lock(x1, x2, -1, false); }
 
-	void owner(int idx, Number * pn) { rocc[idx].number(pn); }
-	bool issync(int idx) { return rocc[idx].issync(); }
-	void setsync(int idx){ rocc[idx].setsync(true); }
+        void owner(int idx, Number * pn) { rocc[idx].number(pn); }
+        bool issync(int idx) { return rocc[idx].issync(); }
+        void setsync(int idx) { rocc[idx].setsync(true); }
 };
 
 class Regman
 {
-	Table tbl;
+        Table tbl;
 
-	int bind(const Number &n);
-	int load(const Number &n);
+        int bind(const Number & n);
+        int load(const Number & n);
 
-	static void store(const Number *n);
+        static void store(const Number * n);
 
-public:
+    public:
 
-	void o1i2(Number & o1, Cpu::OP op, const Number &i1, const Number &i2);
-	void o1i1(Number & o1, Cpu::OP op, const Number &i1);
-	void io1i1(Number & io, Cpu::OP op, const Number &i1);
-	void io1(Number & io, Cpu::OP op);
+        void o1i2(Number & o1, Cpu::OP op, const Number & i1, const Number & i2);
+        void o1i1(Number & o1, Cpu::OP op, const Number & i1);
+        void io1i1(Number & io, Cpu::OP op, const Number & i1);
+        void io1(Number & io, Cpu::OP op);
 
-	void free(int idx) { tbl.free(idx); }
-	void owner(int idx, Number * pn) { tbl.owner(idx, pn); }
-	bool issync(int idx) { return tbl.issync(idx); }
+        void free(int idx) { tbl.free(idx); }
+        void owner(int idx, Number * pn) { tbl.owner(idx, pn); }
+        bool issync(int idx) { return tbl.issync(idx); }
 
-	static void sync_detach(const Number *n, bool needstore);
-	void sync_read(const Number *n);
+        static void sync_detach(const Number * n, bool needstore);
+        void sync_read(const Number * n);
 };
 
 extern Regman regman;
 
 struct Nid
 {
-	static int ncntr;
-	int id;
-	Nid() : id(++ncntr) 
-	{
-		//std::cout << " +" << id << std::flush; 
-	}
-	~Nid() 
-	{
-		//std::cout << " -" << id << std::flush; 
-	}
+    static int ncntr;
+    int id;
+    Nid() : id(++ncntr)
+    {
+        //std::cout << " +" << id << std::flush;
+    }
+    ~Nid()
+    {
+        //std::cout << " -" << id << std::flush;
+    }
 };
 
 class Number
 {
-	Nid nid;
+        Nid nid;
 
-	mutable int regidx;
-	mutable Cpu::Value val;
+        mutable int regidx;
+        mutable Cpu::Value val;
 
-	friend class Regman;
+        friend class Regman;
 
-	void sync() { regman.sync_read(this); }
+        void sync() const { regman.sync_read(this); }
 
-public:
-	Number(int x = 0) : regidx(-1), val(x) {}
-	Number operator==(const Number &n) const { Number r; regman.o1i2(r, Cpu::OP::eq, *this, n); return r; }
-	Number operator*(const Number &n) const { Number r; regman.o1i2(r, Cpu::OP::mul, *this, n); return r; }
-	Number operator+(const Number &n) const { Number r; regman.o1i2(r, Cpu::OP::ad2, *this, n); return r; }
+    public:
+        Number(int x = 0) : regidx(-1), val(x) {}
+        Number operator==(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::eq, *this, n); return r; }
+        Number operator*(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::mul, *this, n); return r; }
+        Number operator+(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::ad2, *this, n); return r; }
 
-	// inplace
-	Number operator+=(const Number &n)
-	{
-		regman.io1i1(*this, Cpu::OP::ad1, n);
-		return *this;
-	}
+        // inplace
+        Number operator+=(const Number & n)
+        {
+            regman.io1i1(*this, Cpu::OP::ad1, n);
+            return *this;
+        }
 
-	Number operator++() { regman.io1(*this, Cpu::OP::inc); return *this; }
-	string str();
-	string dbg();
-	~Number() { regman.free(regidx); }
+        Number operator++() { regman.io1(*this, Cpu::OP::inc); return *this; }
+        string str() const;
+        string dbg();
+        ~Number() { regman.free(regidx); }
 
-	// copy and move semantics
-	Number(Number &n): Number() { copy(*this, n); }
-	Number operator=(const Number &n) { copy(*this, n); return *this; }
-	///Number operator=(Number &&n) { copy(*this, n); return *this; }
-	Number(Number &&);
-	static void copy(Number &o, const Number &i); // cannot invoke copy-c-tor or ass-o-tor
+        // copy and move semantics
+        Number(Number & n): Number() { copy(*this, n); }
+        Number operator=(const Number & n) { copy(*this, n); return *this; }
+        ///Number operator=(Number &&n) { copy(*this, n); return *this; }
+        Number(Number &&);
+        static void copy(Number & o, const Number & i); // cannot invoke copy-c-tor or ass-o-tor
 };
 
-// do not use this while debugging
-//inline std::ostream & operator<<(std::ostream &os, Number &n) { return os << n.str(); }
+// do not use this when debugging, because it may invoke modifications
+inline std::ostream & operator<<(std::ostream &os, const Number &n) { return os << n.str(); }
 
 // END OF HEADER
 
@@ -188,256 +189,256 @@ int Nid::ncntr = 20;
 
 // NUMBER
 
-void Number::copy(Number &o, const Number &i)
+void Number::copy(Number & o, const Number & i)
 {
-	if (&o == &i) return;
+    if (&o == &i) return;
 
-	if (i.regidx < 0)
-	{
-		o.val = i.val;
-		if (o.regidx >= 0)
-		{
-			regman.free(o.regidx);
-			o.regidx = -1;
-		}
-	}
-	else
-		regman.o1i1(o, Cpu::OP::cp, i);
+    if (i.regidx < 0)
+    {
+        o.val = i.val;
+        if (o.regidx >= 0)
+        {
+            regman.free(o.regidx);
+            o.regidx = -1;
+        }
+    }
+    else
+        regman.o1i1(o, Cpu::OP::cp, i);
 }
 
 Number::Number(Number && t)
 {
-	if (t.regidx >= 0)
-	{
-		regidx = t.regidx;
-		t.regidx = -1;
-		regman.owner(regidx,this);
-		if( regman.issync(regidx) ) val = t.val;
-	}
-	else
-	{
-		regidx = -1;
-		val = t.val;
-	}
+    if (t.regidx >= 0)
+    {
+        regidx = t.regidx;
+        t.regidx = -1;
+        regman.owner(regidx, this);
+        if ( regman.issync(regidx) ) val = t.val;
+    }
+    else
+    {
+        regidx = -1;
+        val = t.val;
+    }
 }
 
-string Number::str()
+string Number::str() const
 {
-	sync();
-	std::ostringstream os;
-	os << val;
-	return os.str();
+    sync();
+    std::ostringstream os;
+    os << val;
+    return os.str();
 }
 
 // this function directly access registers and should not be used in code, only debug purpose
 string Number::dbg()
 {
-	Cpu::Value v;
-	if (regidx < 0) v = val;
-	else v = cpu.dbg_access(regidx);
-	std::ostringstream os;
-	os << v;
-	return os.str();
+    Cpu::Value v;
+    if (regidx < 0) v = val;
+    else v = cpu.dbg_access(regidx);
+    std::ostringstream os;
+    os << v;
+    return os.str();
 }
 
 // REGMAN TABLE
 
 void Table::touch(int x1, int x2, int x3)
 {
-	rocc[x1].ts = rocc[x2].ts = rocc[x3].ts = ++ts_cntr;
-	if (ts_cntr >= MAX_TS_CNTR) renormalize_ts();
+    rocc[x1].ts = rocc[x2].ts = rocc[x3].ts = ++ts_cntr;
+    if (ts_cntr >= MAX_TS_CNTR) renormalize_ts();
 }
 
 void Table::lock(int x, bool lc)
 {
-	if (x >= 0) rocc[x].lock = lc;
+    if (x >= 0) rocc[x].lock = lc;
 }
 
 void Table::lock(int x1, int x2, int x3, bool lc)
 {
-	lock(x1, lc);
-	lock(x2, lc);
-	lock(x3, lc);
+    lock(x1, lc);
+    lock(x2, lc);
+    lock(x3, lc);
 }
 
 void Table::free(int idx)
 {
-	if (idx < 0 || idx >= Cpu::REGNUM) return;
+    if (idx < 0 || idx >= Cpu::REGNUM) return;
 
-	rvac.push_back(idx);
-	rocc[idx] = Entry(); // this should not be necessary
+    rvac.push_back(idx);
+    rocc[idx] = Entry(); // this should not be necessary
 }
 
 void Table::unload()
 {
-	if (!rvac.empty()) return;
+    if (!rvac.empty()) return;
 
-	int idx = -1;
-	unsigned int t = MAX_TS_CNTR + 1;
-	for (int i = 0; i < Cpu::UNLNUM || idx < 0; i++)
-	{
-		int & j = regpos;
-		j = (++j) % Cpu::REGNUM;
-		Entry & e = rocc[j];
-		if (e.lock) continue;
-		if (e.ts < t) { idx = j; t = e.ts; }
-	}
+    int idx = -1;
+    unsigned int t = MAX_TS_CNTR + 1;
+    for (int i = 0; i < Cpu::UNLNUM || idx < 0; i++)
+    {
+        int & j = regpos;
+        j = (++j) % Cpu::REGNUM;
+        Entry & e = rocc[j];
+        if (e.lock) continue;
+        if (e.ts < t) { idx = j; t = e.ts; }
+    }
 
-	Entry & e = rocc[idx];
-	Regman::sync_detach(e.number(),!e.syn());
+    Entry & e = rocc[idx];
+    Regman::sync_detach(e.number(), !e.syn());
 
-	free(idx);
+    free(idx);
 }
 
 int Table::alloc(const Number * n, bool syn)
 {
-	unload();
-	int idx = rvac.back();
-	rvac.pop_back();
+    unload();
+    int idx = rvac.back();
+    rvac.pop_back();
 
-	rocc[idx].set(ts_cntr, syn, n);
-	return idx;
+    rocc[idx].set(ts_cntr, syn, n);
+    return idx;
 }
 
 void Table::renormalize_ts()
 {
-	for (unsigned int i = 1; i <= Cpu::REGNUM; i++)
-	{
-		unsigned t = MAX_TS_CNTR + 1;
-		int idx = 0;
+    for (unsigned int i = 1; i <= Cpu::REGNUM; i++)
+    {
+        unsigned t = MAX_TS_CNTR + 1;
+        int idx = 0;
 
-		for (int j = 0; j < Cpu::REGNUM; j++)
-		{
-			if (rocc[j].ts < t && rocc[j].ts > i )
-			{
-				idx = j;
-				t = rocc[j].ts;
-			}
-		}
+        for (int j = 0; j < Cpu::REGNUM; j++)
+        {
+            if (rocc[j].ts < t && rocc[j].ts > i )
+            {
+                idx = j;
+                t = rocc[j].ts;
+            }
+        }
 
-		if (idx >= 0) rocc[idx].ts = i;
-	}
-	ts_cntr = Cpu::REGNUM + 1;
+        if (idx >= 0) rocc[idx].ts = i;
+    }
+    ts_cntr = Cpu::REGNUM + 1;
 }
 
 // CPU
 
 void Cpu::instr(int o1, OP op, int i1, int i2)
 {
-	switch (op)
-	{
-	case OP::eq: regs[o1] = (regs[i1] == regs[i2]); break;
-	case OP::mul: regs[o1] = (regs[i1] * regs[i2]); break;
-	case OP::ad1: regs[o1] += regs[i1]; break;
-	case OP::cp: regs[o1] = regs[i1]; break;
-	case OP::ad2: regs[o1] = (regs[i1] + regs[i2]); break;
-	case OP::inc: ++regs[o1]; break;
-	default:
-		throw 279; // bad instruction
-	}
+    switch (op)
+    {
+        case OP::eq: regs[o1] = (regs[i1] == regs[i2]); break;
+        case OP::mul: regs[o1] = (regs[i1] * regs[i2]); break;
+        case OP::ad1: regs[o1] += regs[i1]; break;
+        case OP::cp: regs[o1] = regs[i1]; break;
+        case OP::ad2: regs[o1] = (regs[i1] + regs[i2]); break;
+        case OP::inc: ++regs[o1]; break;
+        default:
+            throw 279; // bad instruction
+    }
 }
 
 // REGMAN
 
-void Regman::store(const Number *n)
+void Regman::store(const Number * n)
 {
-	int idx = n->regidx;
-	if (idx < 0) return;
+    int idx = n->regidx;
+    if (idx < 0) return;
 
-	cpu.instr_store(idx, n->val);
+    cpu.instr_store(idx, n->val);
 }
 
-void Regman::sync_detach(const Number *n, bool needstore)
+void Regman::sync_detach(const Number * n, bool needstore)
 {
-	int idx = n->regidx;
-	if (idx < 0) return;
+    int idx = n->regidx;
+    if (idx < 0) return;
 
-	if( needstore ) store(n);
-	n->regidx = -1;
+    if ( needstore ) store(n);
+    n->regidx = -1;
 }
 
-void Regman::sync_read(const Number *n)
+void Regman::sync_read(const Number * n)
 {
-	int idx = n->regidx;
-	if (idx < 0) return;
+    int idx = n->regidx;
+    if (idx < 0) return;
 
-	store(n);
-	tbl.setsync(idx);
+    store(n);
+    tbl.setsync(idx);
 }
 
-int Regman::bind(const Number &n)
+int Regman::bind(const Number & n)
 {
-	int & i = n.regidx;
-	if (i >= 0) return i;
-	return (i = tbl.alloc(&n, false));
+    int & i = n.regidx;
+    if (i >= 0) return i;
+    return (i = tbl.alloc(&n, false));
 }
 
-int Regman::load(const Number &n)
+int Regman::load(const Number & n)
 {
-	int & i = n.regidx;
-	if (i >= 0) return i;
-	i = tbl.alloc(&n, true);
-	cpu.instr_load(i, n.val);
-	return i;
+    int & i = n.regidx;
+    if (i >= 0) return i;
+    i = tbl.alloc(&n, true);
+    cpu.instr_load(i, n.val);
+    return i;
 }
 
-void Regman::o1i2(Number & o1, Cpu::OP op, const Number &i1, const Number &i2)
+void Regman::o1i2(Number & o1, Cpu::OP op, const Number & i1, const Number & i2)
 {
-	tbl.lock(o1.regidx, i1.regidx, i2.regidx);
+    tbl.lock(o1.regidx, i1.regidx, i2.regidx);
 
-	int x1 = load(i1);
-	tbl.lock(x1);
+    int x1 = load(i1);
+    tbl.lock(x1);
 
-	int x2 = load(i2);
-	tbl.lock(x2);
+    int x2 = load(i2);
+    tbl.lock(x2);
 
-	int y = bind(o1);
+    int y = bind(o1);
 
-	tbl.unlock(x1, x2, y);
-	cpu.instr(y, op, x1, x2);
-	tbl.unsync(y);
+    tbl.unlock(x1, x2, y);
+    cpu.instr(y, op, x1, x2);
+    tbl.unsync(y);
 
-	tbl.touch(x1, x2, y);
+    tbl.touch(x1, x2, y);
 }
 
-void Regman::o1i1(Number & o1, Cpu::OP op, const Number &i1)
+void Regman::o1i1(Number & o1, Cpu::OP op, const Number & i1)
 {
-	tbl.lock(o1.regidx, i1.regidx);
+    tbl.lock(o1.regidx, i1.regidx);
 
-	int x1 = load(i1);
-	tbl.lock(x1);
+    int x1 = load(i1);
+    tbl.lock(x1);
 
-	int y = bind(o1);
+    int y = bind(o1);
 
-	tbl.unlock(x1, y);
-	cpu.instr(y, op, x1, -1);
-	tbl.unsync(y);
+    tbl.unlock(x1, y);
+    cpu.instr(y, op, x1, -1);
+    tbl.unsync(y);
 
-	tbl.touch(x1, y, y);
+    tbl.touch(x1, y, y);
 }
 
-void Regman::io1i1(Number & o1, Cpu::OP op, const Number &i1)
+void Regman::io1i1(Number & o1, Cpu::OP op, const Number & i1)
 {
-	tbl.lock(o1.regidx, i1.regidx);
+    tbl.lock(o1.regidx, i1.regidx);
 
-	int x1 = load(i1);
-	tbl.lock(x1);
+    int x1 = load(i1);
+    tbl.lock(x1);
 
-	int y = load(o1);
+    int y = load(o1);
 
-	tbl.unlock(x1, y);
-	cpu.instr(y, op, x1, -1);
-	tbl.unsync(y);
+    tbl.unlock(x1, y);
+    cpu.instr(y, op, x1, -1);
+    tbl.unsync(y);
 
-	tbl.touch(x1, y, y);
+    tbl.touch(x1, y, y);
 }
 
 void Regman::io1(Number & io, Cpu::OP op)
 {
-	int x = load(io);
-	cpu.instr(x, op, -1, -1);
-	tbl.unsync(x);
-	tbl.touch(x, x, x);
+    int x = load(io);
+    cpu.instr(x, op, -1, -1);
+    tbl.unsync(x);
+    tbl.touch(x, x, x);
 }
 
 // END OF IMPL
@@ -453,28 +454,27 @@ using std::cout;
 int main()
 try
 {
-	Number num = E(7);
-	Number f1 = E(1);
-	Number f2 = E(1);
-	Number fi = E(1);
-	Number i = E(1);
-	Number result = E(0);
+    Number num = E(7);
+    Number f1 = E(1);
+    Number f2 = E(1);
+    Number fi = E(1);
+    Number i = E(1);
+    Number res = E(0);
 
-	int counter = 0;
-	do
-	{
-		result += (i == num) * fi;
-		fi = f1 + f2;
-		f1 = f2;
-		f2 = fi;
-		++i;
-	} while (++counter < MAX_NUM);
-	cout << "fib: " << result.str() << "\n";
-	cout << "loads: " << cpu.ld_cntr << "  strores: " << cpu.st_cntr << '\n';
-	cout << cpu.REGNUM << '\t' << cpu.ld_cntr << '\t' << cpu.st_cntr << '\n';
+    for( int cntr=0; cntr<MAX_NUM; cntr++ )
+    {
+        res += (i == num) * fi;
+        fi = f1 + f2;
+        f1 = f2;
+        f2 = fi;
+        ++i;
+    }
+    cout << "fib: " << res << "\n";
+    cout << "loads: " << cpu.ld_cntr << "  strores: " << cpu.st_cntr << '\n';
+    cout << cpu.REGNUM << '\t' << cpu.ld_cntr << '\t' << cpu.st_cntr << '\n';
 }
 catch (...)
 {
-	cout << "error\n";
-	return 1;
+    cout << "error\n";
+    return 1;
 }
