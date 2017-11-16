@@ -8,7 +8,7 @@ using std::string;
 // has to deny direct access to regs
 class Cpu {
 public:
-	const static int REGNUM = 3;
+	const static int REGNUM = 10;
 	const static int UNLNUM = REGNUM; // this number [1,REGNUM] defines search cyclic for unload
 	// 1 means unload the next register
 	// n means check cyclicly n and unload the oldest
@@ -20,10 +20,21 @@ public:
 	enum class OP { eq, mul, ad1, ad2, inc, cp };
 
 	void instr(int o1, OP op, int i1, int i2);
-	void instr_load(int r, const Value &v) { regs[r] = v; }
-	void instr_store(int r, Value &v) { v = regs[r]; }
+	void instr_load(int r, const Value &v) 
+	{
+		regs[r] = v; 
+		ld_cntr++; 
+	}
+
+	void instr_store(int r, Value &v) 
+	{
+		v = regs[r];
+		st_cntr++; 
+	}
 
 	Value & dbg_access(int idx) { return regs[idx]; }
+
+	int ld_cntr = 0, st_cntr = 0;
 
 private:
 	Value regs[REGNUM];
@@ -34,16 +45,14 @@ class Number;
 class Table
 {
 	static unsigned int ts_cntr;
-	const static unsigned MAX_TS_CNTR = 20; // do not set to MAX UNINT
+	const static unsigned MAX_TS_CNTR = Cpu::REGNUM + 1000; // do not set to MAX UNINT, cannot be less then REGNUM
 	static int regpos;
 
 	class Entry
 	{
 		friend class Table;
-	///public:
 		unsigned int ts; // timestamp;
 		bool lock; // locking for unloading
-	///private:
 		bool sync; // sychronized value
 		Number *pn;
 	public:
@@ -147,7 +156,7 @@ public:
 	Number operator+(Number &n) { Number r; regman.o1i2(r, Cpu::OP::ad2, *this, n); return r; }
 
 	// inplace
-	Number operator+=(Number &n)
+	Number operator+=(Number &&n)
 	{
 		regman.io1i1(*this, Cpu::OP::ad1, n);
 		return *this;
@@ -159,8 +168,9 @@ public:
 	~Number() { regman.free(regidx); }
 
 	// copy and move semantics
-	Number(Number &n) { copy(*this, n); }
+	Number(Number &n): Number() { copy(*this, n); }
 	Number operator=(Number &n) { copy(*this, n); return *this; }
+	Number operator=(Number &&n) { copy(*this, n); return *this; }
 	Number(Number &&);
 	static void copy(Number &o, Number &i); // cannot invoke copy-c-tor or ass-o-tor
 };
@@ -183,9 +193,16 @@ int Nid::ncntr = 20;
 void Number::copy(Number &o, Number &i)
 {
 	if (&o == &i) return;
-	o.regidx = -1;
+
 	if (i.regidx < 0)
+	{
 		o.val = i.val;
+		if (o.regidx >= 0)
+		{
+			regman.free(o.regidx);
+			o.regidx = -1;
+		}
+	}
 	else
 		regman.o1i1(o, Cpu::OP::cp, i);
 }
@@ -329,7 +346,6 @@ void Regman::store(Number *n)
 	int idx = n->regidx;
 	if (idx < 0) return;
 
-	///n->val = Cpu::regs[idx];
 	cpu.instr_store(idx, n->val);
 }
 
@@ -446,29 +462,18 @@ try
 	Number i = E(1);
 	Number result = E(0);
 
-	///std::cout << (E(2) * E(3)) << '\n';
-
 	int counter = 0;
 	do
 	{
 		result += (i == num) * fi;
-		//cout << " r="<<result.dbg();
-
-		//cout << " f1=" << f1.dbg() << " f2=" << f2.dbg();
 		fi = f1 + f2;
-		//cout << " fi=" << fi.dbg() << " f1=" << f1.dbg() << " f2=" << f2.dbg();
-
 		f1 = f2;
-		//cout << " f1=" << f1.dbg();
-
 		f2 = fi;
-		//cout << " f2=" << f2.dbg();
-
 		++i;
-		//cout << " i=" << i.dbg();
-
 	} while (++counter < MAX_NUM);
 	cout << "fib: " << result.str() << "\n";
+	cout << "loads: " << cpu.ld_cntr << "  strores: " << cpu.st_cntr << '\n';
+	cout << cpu.REGNUM << '\t' << cpu.ld_cntr << '\t' << cpu.st_cntr << '\n';
 }
 catch (...)
 {
