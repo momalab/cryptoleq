@@ -175,7 +175,7 @@ class Number
 };
 
 // do not use this when debugging, because it may invoke modifications
-inline std::ostream & operator<<(std::ostream &os, const Number &n) { return os << n.str(); }
+inline std::ostream & operator<<(std::ostream & os, const Number & n) { return os << n.str(); }
 
 // END OF HEADER
 
@@ -247,6 +247,14 @@ void Table::touch(int x1, int x2, int x3)
 {
     rocc[x1].ts = rocc[x2].ts = rocc[x3].ts = ++ts_cntr;
     if (ts_cntr >= MAX_TS_CNTR) renormalize_ts();
+
+    const bool UnloadALWAYS = false;
+    if ( UnloadALWAYS )
+    {
+        if ( rocc[x1].pn ) regman.sync_detach(rocc[x1].pn, true);
+        if ( rocc[x2].pn ) regman.sync_detach(rocc[x2].pn, true);
+        if ( rocc[x3].pn ) regman.sync_detach(rocc[x3].pn, true);
+    }
 }
 
 void Table::lock(int x, bool lc)
@@ -461,7 +469,7 @@ try
     Number i = E(1);
     Number res = E(0);
 
-    for( int cntr=0; cntr<MAX_NUM; cntr++ )
+    for ( int cntr = 0; cntr < MAX_NUM; cntr++ )
     {
         res += (i == num) * fi;
         fi = f1 + f2;
@@ -473,8 +481,13 @@ try
     cout << "loads: " << cpu.ld_cntr << "  strores: " << cpu.st_cntr << '\n';
     cout << cpu.REGNUM << '\t' << cpu.ld_cntr << '\t' << cpu.st_cntr << '\n';
 }
+catch (int x)
+{
+    cout << "error "<<x<<"\n";
+    return 1;
+}
 catch (...)
 {
-    cout << "error\n";
+    cout << "error ...\n";
     return 1;
 }
