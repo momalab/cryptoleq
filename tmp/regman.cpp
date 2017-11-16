@@ -89,20 +89,21 @@ class Regman
 	int bind(Number &n);
 	int load(Number &n);
 
-	static void store(Number *n, int idx);
+	static void store(Number *n);
 
 public:
 
 	void o1i2(Number & o1, cpu::OP op, Number &i1, Number &i2);
 	void o1i1(Number & o1, cpu::OP op, Number &i1);
-	void io1(Number & io1, cpu::OP op);
+	void io1i1(Number & io, cpu::OP op, Number &i1);
+	void io1(Number & io, cpu::OP op);
 
 	void free(int idx) { tbl.free(idx); }
 	void owner(int idx, Number * pn) { tbl.owner(idx, pn); }
 	bool issync(int idx) { return tbl.issync(idx); }
 
-	static void sync_detach(Number *n, int idx);
-	void sync_read(Number *n, int idx);
+	static void sync_detach(Number *n, bool needstore);
+	void sync_read(Number *n);
 };
 
 extern Regman regman;
@@ -113,11 +114,11 @@ struct Nid
 	int id;
 	Nid() : id(++ncntr) 
 	{
-		std::cout << " +" << id << std::flush; 
+		//std::cout << " +" << id << std::flush; 
 	}
 	~Nid() 
 	{
-		std::cout << " -" << id << std::flush; 
+		//std::cout << " -" << id << std::flush; 
 	}
 };
 
@@ -132,7 +133,7 @@ class Number
 
 	friend class Regman;
 
-	void sync() { regman.sync_read(this,regidx); }
+	void sync() { regman.sync_read(this); }
 
 public:
 	Number(int x = 0) : regidx(-1), val(x) {}
@@ -143,12 +144,13 @@ public:
 	// inplace
 	Number operator+=(Number &n)
 	{
-		regman.o1i1(*this, cpu::OP::ad1, n);
+		regman.io1i1(*this, cpu::OP::ad1, n);
 		return *this;
 	}
 
 	Number operator++() { regman.io1(*this, cpu::OP::inc); return *this; }
 	string str();
+	string dbg();
 	~Number() { regman.free(regidx); }
 
 	// copy and move semantics
@@ -158,7 +160,8 @@ public:
 	static void copy(Number &o, Number &i); // cannot invoke copy-c-tor or ass-o-tor
 };
 
-inline std::ostream & operator<<(std::ostream &os, Number &n) { return os << n.str(); }
+// do not use this while debugging
+//inline std::ostream & operator<<(std::ostream &os, Number &n) { return os << n.str(); }
 
 // END OF HEADER
 
@@ -202,6 +205,17 @@ string Number::str()
 	sync();
 	std::ostringstream os;
 	os << val;
+	return os.str();
+}
+
+// this function directly access registers and should not be used in code, only debug purpose
+string Number::dbg()
+{
+	cpu::Value v;
+	if (regidx < 0) v = val;
+	else v = cpu::regs[regidx];
+	std::ostringstream os;
+	os << v;
 	return os.str();
 }
 
@@ -249,7 +263,7 @@ void Table::unload()
 	}
 
 	Entry & e = rocc[idx];
-	if (!e.syn()) Regman::sync_detach(e.number(), idx);
+	Regman::sync_detach(e.number(),!e.syn());
 
 	free(idx);
 }
@@ -304,21 +318,30 @@ void cpu::instr(int o1, OP op, int i1, int i2)
 
 // REGMAN
 
-void Regman::store(Number *n, int idx)
+void Regman::store(Number *n)
 {
+	int idx = n->regidx;
+	if (idx < 0) return;
+
 	n->val = cpu::regs[idx];
 }
 
-void Regman::sync_detach(Number *n, int idx)
+void Regman::sync_detach(Number *n, bool needstore)
 {
-	store(n, idx);
+	int idx = n->regidx;
+	if (idx < 0) return;
+
+	if( needstore ) store(n);
 	n->regidx = -1;
 }
 
-void Regman::sync_read(Number *n, int idx)
+void Regman::sync_read(Number *n)
 {
-	store(n, idx);
-	tbl.setsync(true);
+	int idx = n->regidx;
+	if (idx < 0) return;
+
+	store(n);
+	tbl.setsync(idx);
 }
 
 int Regman::bind(Number &n)
@@ -372,6 +395,22 @@ void Regman::o1i1(Number & o1, cpu::OP op, Number &i1)
 	tbl.touch(x1, y, y);
 }
 
+void Regman::io1i1(Number & o1, cpu::OP op, Number &i1)
+{
+	tbl.lock(o1.regidx, i1.regidx);
+
+	int x1 = load(i1);
+	tbl.lock(x1);
+
+	int y = load(o1);
+
+	tbl.unlock(x1, y);
+	cpu::instr(y, op, x1, -1);
+	tbl.unsync(y);
+
+	tbl.touch(x1, y, y);
+}
+
 void Regman::io1(Number & io, cpu::OP op)
 {
 	int x = load(io);
@@ -388,6 +427,8 @@ Number E(int x) { return Number(x); }
 
 const int MAX_NUM = 50;
 
+using std::cout;
+
 int main()
 try
 {
@@ -398,19 +439,32 @@ try
 	Number i = E(1);
 	Number result = E(0);
 
+	///std::cout << (E(2) * E(3)) << '\n';
+
 	int counter = 0;
 	do
 	{
 		result += (i == num) * fi;
+		cout << " r="<<result.dbg();
+
+		cout << " f1=" << f1.dbg() << " f2=" << f2.dbg();
 		fi = f1 + f2;
+		cout << " fi=" << fi.dbg() << " f1=" << f1.dbg() << " f2=" << f2.dbg();
+
 		f1 = f2;
+		cout << " f1=" << f1.dbg();
+
 		f2 = fi;
+		cout << " f2=" << f2.dbg();
+
 		++i;
+		cout << " i=" << i.dbg();
+
 	} while (++counter < MAX_NUM);
-	std::cout << "fib: " << result << "\n";
+	cout << "fib: " << result.str() << "\n";
 }
 catch (...)
 {
-	std::cout << "error\n";
+	cout << "error\n";
 	return 1;
 }
