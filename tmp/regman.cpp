@@ -8,7 +8,7 @@ using std::string;
 // has to deny direct access to regs
 class Cpu {
 public:
-	const static int REGNUM = 10;
+	const static int REGNUM = 3;
 	const static int UNLNUM = REGNUM; // this number [1,REGNUM] defines search cyclic for unload
 	// 1 means unload the next register
 	// n means check cyclicly n and unload the oldest
@@ -54,15 +54,15 @@ class Table
 		unsigned int ts; // timestamp;
 		bool lock; // locking for unloading
 		bool sync; // sychronized value
-		Number *pn;
+		const Number *pn;
 	public:
 		Entry() : ts(0), lock(false), sync(false), pn(nullptr) {}
-		void set(unsigned t, bool sy, Number *p = nullptr) { ts = t; sync = sy; if (p) pn = p; }
+		void set(unsigned t, bool sy, const Number *p = nullptr) { ts = t; sync = sy; if (p) pn = p; }
 		void setsync(bool s) { sync = s; }
 
 		bool syn() const { return sync; }
-		Number * number() { return pn; }
-		void number(Number *p) { pn=p; }
+		const Number * number() { return pn; }
+		void number(const Number *p) { pn=p; }
 		bool issync() { return sync; }
 	};
 
@@ -78,7 +78,7 @@ public:
 
 	void unload();
 	void free(int idx);
-	int alloc(Number *, bool syn);
+	int alloc(const Number *, bool syn);
 
 	void touch(int x1, int x2, int x3);
 	void unsync(int i) { rocc[i].setsync(false); }
@@ -100,24 +100,24 @@ class Regman
 {
 	Table tbl;
 
-	int bind(Number &n);
-	int load(Number &n);
+	int bind(const Number &n);
+	int load(const Number &n);
 
-	static void store(Number *n);
+	static void store(const Number *n);
 
 public:
 
-	void o1i2(Number & o1, Cpu::OP op, Number &i1, Number &i2);
-	void o1i1(Number & o1, Cpu::OP op, Number &i1);
-	void io1i1(Number & io, Cpu::OP op, Number &i1);
+	void o1i2(Number & o1, Cpu::OP op, const Number &i1, const Number &i2);
+	void o1i1(Number & o1, Cpu::OP op, const Number &i1);
+	void io1i1(Number & io, Cpu::OP op, const Number &i1);
 	void io1(Number & io, Cpu::OP op);
 
 	void free(int idx) { tbl.free(idx); }
 	void owner(int idx, Number * pn) { tbl.owner(idx, pn); }
 	bool issync(int idx) { return tbl.issync(idx); }
 
-	static void sync_detach(Number *n, bool needstore);
-	void sync_read(Number *n);
+	static void sync_detach(const Number *n, bool needstore);
+	void sync_read(const Number *n);
 };
 
 extern Regman regman;
@@ -136,14 +136,12 @@ struct Nid
 	}
 };
 
-// this class cannot be const because its internals are modified by Regman
-// for enforce constness, an adator is required that casts away const modifier
 class Number
 {
 	Nid nid;
 
-	int regidx;
-	Cpu::Value val;
+	mutable int regidx;
+	mutable Cpu::Value val;
 
 	friend class Regman;
 
@@ -151,12 +149,12 @@ class Number
 
 public:
 	Number(int x = 0) : regidx(-1), val(x) {}
-	Number operator==(Number &n) { Number r; regman.o1i2(r, Cpu::OP::eq, *this, n); return r; }
-	Number operator*(Number &n) { Number r; regman.o1i2(r, Cpu::OP::mul, *this, n); return r; }
-	Number operator+(Number &n) { Number r; regman.o1i2(r, Cpu::OP::ad2, *this, n); return r; }
+	Number operator==(const Number &n) const { Number r; regman.o1i2(r, Cpu::OP::eq, *this, n); return r; }
+	Number operator*(const Number &n) const { Number r; regman.o1i2(r, Cpu::OP::mul, *this, n); return r; }
+	Number operator+(const Number &n) const { Number r; regman.o1i2(r, Cpu::OP::ad2, *this, n); return r; }
 
 	// inplace
-	Number operator+=(Number &&n)
+	Number operator+=(const Number &n)
 	{
 		regman.io1i1(*this, Cpu::OP::ad1, n);
 		return *this;
@@ -169,10 +167,10 @@ public:
 
 	// copy and move semantics
 	Number(Number &n): Number() { copy(*this, n); }
-	Number operator=(Number &n) { copy(*this, n); return *this; }
-	Number operator=(Number &&n) { copy(*this, n); return *this; }
+	Number operator=(const Number &n) { copy(*this, n); return *this; }
+	///Number operator=(Number &&n) { copy(*this, n); return *this; }
 	Number(Number &&);
-	static void copy(Number &o, Number &i); // cannot invoke copy-c-tor or ass-o-tor
+	static void copy(Number &o, const Number &i); // cannot invoke copy-c-tor or ass-o-tor
 };
 
 // do not use this while debugging
@@ -190,7 +188,7 @@ int Nid::ncntr = 20;
 
 // NUMBER
 
-void Number::copy(Number &o, Number &i)
+void Number::copy(Number &o, const Number &i)
 {
 	if (&o == &i) return;
 
@@ -291,7 +289,7 @@ void Table::unload()
 	free(idx);
 }
 
-int Table::alloc(Number * n, bool syn)
+int Table::alloc(const Number * n, bool syn)
 {
 	unload();
 	int idx = rvac.back();
@@ -341,7 +339,7 @@ void Cpu::instr(int o1, OP op, int i1, int i2)
 
 // REGMAN
 
-void Regman::store(Number *n)
+void Regman::store(const Number *n)
 {
 	int idx = n->regidx;
 	if (idx < 0) return;
@@ -349,7 +347,7 @@ void Regman::store(Number *n)
 	cpu.instr_store(idx, n->val);
 }
 
-void Regman::sync_detach(Number *n, bool needstore)
+void Regman::sync_detach(const Number *n, bool needstore)
 {
 	int idx = n->regidx;
 	if (idx < 0) return;
@@ -358,7 +356,7 @@ void Regman::sync_detach(Number *n, bool needstore)
 	n->regidx = -1;
 }
 
-void Regman::sync_read(Number *n)
+void Regman::sync_read(const Number *n)
 {
 	int idx = n->regidx;
 	if (idx < 0) return;
@@ -367,14 +365,14 @@ void Regman::sync_read(Number *n)
 	tbl.setsync(idx);
 }
 
-int Regman::bind(Number &n)
+int Regman::bind(const Number &n)
 {
 	int & i = n.regidx;
 	if (i >= 0) return i;
 	return (i = tbl.alloc(&n, false));
 }
 
-int Regman::load(Number &n)
+int Regman::load(const Number &n)
 {
 	int & i = n.regidx;
 	if (i >= 0) return i;
@@ -383,7 +381,7 @@ int Regman::load(Number &n)
 	return i;
 }
 
-void Regman::o1i2(Number & o1, Cpu::OP op, Number &i1, Number &i2)
+void Regman::o1i2(Number & o1, Cpu::OP op, const Number &i1, const Number &i2)
 {
 	tbl.lock(o1.regidx, i1.regidx, i2.regidx);
 
@@ -402,7 +400,7 @@ void Regman::o1i2(Number & o1, Cpu::OP op, Number &i1, Number &i2)
 	tbl.touch(x1, x2, y);
 }
 
-void Regman::o1i1(Number & o1, Cpu::OP op, Number &i1)
+void Regman::o1i1(Number & o1, Cpu::OP op, const Number &i1)
 {
 	tbl.lock(o1.regidx, i1.regidx);
 
@@ -418,7 +416,7 @@ void Regman::o1i1(Number & o1, Cpu::OP op, Number &i1)
 	tbl.touch(x1, y, y);
 }
 
-void Regman::io1i1(Number & o1, Cpu::OP op, Number &i1)
+void Regman::io1i1(Number & o1, Cpu::OP op, const Number &i1)
 {
 	tbl.lock(o1.regidx, i1.regidx);
 
