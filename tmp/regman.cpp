@@ -455,6 +455,18 @@ void Regman::io1(Number & io, Cpu::OP op)
 
 Number E(int x) { return Number(x); }
 
+// static encryption
+Number operator "" _E(unsigned long long int x)
+{
+    switch (x)
+    {
+        case 7: return E(7);
+        case 1: return E(1);
+        case 0: return E(0);
+    }
+    throw int(x);
+}
+
 const int MAX_NUM = 50;
 
 using std::cout;
@@ -462,12 +474,12 @@ using std::cout;
 int main()
 try
 {
-    Number num = E(7);
-    Number f1 = E(1);
-    Number f2 = E(1);
-    Number fi = E(1);
-    Number i = E(1);
-    Number res = E(0);
+    Number num = 7_E;
+    Number f1 = 1_E;
+    Number f2 = 1_E;
+    Number fi = 1_E;
+    Number i = 1_E;
+    Number res = 0_E;
 
     for ( int cntr = 0; cntr < MAX_NUM; cntr++ )
     {
@@ -483,7 +495,12 @@ try
 }
 catch (int x)
 {
-    cout << "error "<<x<<"\n";
+    cout << "error " << x << "\n";
+    return 1;
+}
+catch (const char * e)
+{
+    cout << "error " << e << "\n";
     return 1;
 }
 catch (...)
