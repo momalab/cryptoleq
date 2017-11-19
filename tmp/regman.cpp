@@ -9,7 +9,7 @@ using std::string;
 class Cpu
 {
     public:
-        const static int REGNUM = 3;
+        const static int REGNUM = 16;
         const static int UNLNUM = REGNUM; // this number [1,REGNUM] defines search cyclic for unload
         // 1 means unload the next register
         // n means check cyclicly n and unload the oldest
@@ -460,6 +460,7 @@ Number operator "" _E(unsigned long long int x)
 {
     switch (x)
     {
+        case 12: return E(12);
         case 7: return E(7);
         case 1: return E(1);
         case 0: return E(0);
