@@ -5,11 +5,21 @@
 
 using std::string;
 
+
+#ifndef REGS
+#define REGS 16
+#endif
+
+#ifndef REG0
+#define REG0 1
+#endif
+
+
 // has to deny direct access to regs
 class Cpu
 {
     public:
-        const static int REGNUM = 16;
+        const static int REGNUM = REGS;
         const static int UNLNUM = REGNUM; // this number [1,REGNUM] defines search cyclic for unload
         // 1 means unload the next register
         // n means check cyclicly n and unload the oldest
@@ -245,10 +255,13 @@ string Number::dbg()
 
 void Table::touch(int x1, int x2, int x3)
 {
+	if (x1 < 0 || x1 >= cpu.REGNUM || x2 < 0 || x2 >= cpu.REGNUM || x3 < 0 || x3 >= cpu.REGNUM)
+		throw 258;
+
     rocc[x1].ts = rocc[x2].ts = rocc[x3].ts = ++ts_cntr;
     if (ts_cntr >= MAX_TS_CNTR) renormalize_ts();
 
-    const bool UnloadALWAYS = false;
+    const bool UnloadALWAYS = REG0;
     if ( UnloadALWAYS )
     {
         if ( rocc[x1].pn ) regman.sync_detach(rocc[x1].pn, true);
@@ -370,7 +383,9 @@ void Regman::sync_read(const Number * n)
     int idx = n->regidx;
     if (idx < 0) return;
 
-    store(n);
+	if (tbl.issync(idx)) return;
+
+	store(n);
     tbl.setsync(idx);
 }
 
@@ -493,6 +508,8 @@ try
     cout << "fib: " << res << "\n";
     cout << "loads: " << cpu.ld_cntr << "  strores: " << cpu.st_cntr << '\n';
     cout << cpu.REGNUM << '\t' << cpu.ld_cntr << '\t' << cpu.st_cntr << '\n';
+
+    return 0;
 }
 catch (int x)
 {
@@ -504,8 +521,13 @@ catch (const char * e)
     cout << "error " << e << "\n";
     return 1;
 }
+catch (std::exception e)
+{
+	cout << "error e: "<<e.what()<<"\n";
+	return 1;
+}
 catch (...)
 {
-    cout << "error ...\n";
-    return 1;
+	cout << "error ...\n";
+	return 1;
 }

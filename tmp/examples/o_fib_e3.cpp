@@ -1,17 +1,10 @@
-#define main mainz
-#include "../regman.cpp"
-#undef main
-
-typedef Number SecureInt;
-#define asm(x)
+#include "o_reg.inc"
 
 using namespace std;
 
 #define MAX_NUM 50
-#define NUM 12
 
-int main()
-try
+int mainz()
 {
 	SecureInt num = (12_E);
 	SecureInt f1 = (0_E);
@@ -31,17 +24,8 @@ try
 		++i;
 	} while (++counter < MAX_NUM);
 	cout << "fib( " << num.str() << " ) = " << result.str() << "\n";
-	cout << "fib( " << num.str() << " ) = " << result.str() << "\n";
-
-    cout << "loads: " << cpu.ld_cntr << "  strores: " << cpu.st_cntr << '\n';
-    cout << cpu.REGNUM << '\t' << cpu.ld_cntr << '\t' << cpu.st_cntr << '\n';
 
 	//asm("l.debug");
 	return 0;
-}
-catch(...)
-{
-	cout<<"Error ex\n";
-	return 1;
 }
 
