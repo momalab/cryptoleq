@@ -55,4 +55,40 @@ cl -EHsc -Ox %1.cpp -DREGS=19
 cl -EHsc -Ox %1.cpp -DREGS=20
 %1 | sed -n 4,4p >> %1.out
 
+cl -EHsc -Ox %1.cpp -DREGS=21
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=22
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=23
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=24
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=25
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=26
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=27
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=28
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=29
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=30
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=31
+%1 | sed -n 4,4p >> %1.out
+
+cl -EHsc -Ox %1.cpp -DREGS=32
+%1 | sed -n 4,4p >> %1.out
+
 rm %1.obj %1.exe

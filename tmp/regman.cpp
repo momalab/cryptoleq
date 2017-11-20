@@ -28,7 +28,8 @@ class Cpu
         // cannot be 0
 
         using Value = int;
-        enum class OP { eq, mu1, mu2, ad1, ad2, inc, cp, su1, su2, leq, lsh, rsh, xo1 };
+        enum class OP { eq, mu1, mu2, ad1, ad2, inc, cp, 
+		su1, su2, leq, lsh, rsh, xo1, bor };
 
         void instr(int o1, OP op, int i1, int i2);
         void instr_load(int r, const Value & v)
@@ -165,6 +166,7 @@ class Number
 
         Number operator<<(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::lsh, *this, n); return r; }
         Number operator>>(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::rsh, *this, n); return r; }
+        Number operator|(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::bor, *this, n); return r; }
 
         Number operator*(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::mu2, *this, n); return r; }
         Number operator+(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::ad2, *this, n); return r; }
@@ -374,6 +376,7 @@ void Cpu::instr(int o1, OP op, int i1, int i2)
 
         case OP::lsh: regs[o1] = (regs[i1] << regs[i2]); break;
         case OP::rsh: regs[o1] = (regs[i1] >> regs[i2]); break;
+        case OP::bor: regs[o1] = (regs[i1] | regs[i2]); break;
 
         case OP::xo1: regs[o1] ^= regs[i1]; break;
 

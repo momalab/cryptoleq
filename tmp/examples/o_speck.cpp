@@ -11,7 +11,9 @@ SecureInt E0, E1, E2, E7, EEDS;
 
 //#define ROR(x, r) ((x >> r) | (x << ((sizeof(uint16_t) * 8) - r)))
 //#define ROL(x, r) ((x << r) | (x >> ((sizeof(uint16_t) * 8) - r)))
-#define ROR(x, r) (SecureInt::ror(x,r))
+//#define ROR(x, r) (SecureInt::ror(x,r))
+//#define ROR(x, r) ((x >> r) | (x << (EEDS - r)))
+#define ROR(x, r) ((x >> r))
 #define ROL(x, r) ((x << r) | (x >> (EEDS - r)))
 #define R(x, y, k) (x = ROR(x, E7), x += y, x ^= k, y = ROL(y, E2), y ^= x)
 
@@ -54,8 +56,10 @@ int mainz(void)
 
 	for (int i = 0; i < ROUNDS; ++i)
 	{
-		cout << exp[i].str() << "\n";
+		cout << exp[i].str() << " ";
 	}
+
+	cout<<'\n';
 
 	asm("l.debug");
 	return EXIT_SUCCESS;
