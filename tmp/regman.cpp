@@ -28,7 +28,7 @@ class Cpu
         // cannot be 0
 
         using Value = int;
-        enum class OP { eq, mu1, mu2, ad1, ad2, inc, cp };
+        enum class OP { eq, mu1, mu2, ad1, ad2, inc, cp, su1, su2, leq };
 
         void instr(int o1, OP op, int i1, int i2);
         void instr_load(int r, const Value & v)
@@ -161,13 +161,21 @@ class Number
     public:
         Number(int x = 0) : regidx(-1), val(x) {}
         Number operator==(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::eq, *this, n); return r; }
+        Number operator<=(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::leq, *this, n); return r; }
+
         Number operator*(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::mu2, *this, n); return r; }
         Number operator+(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::ad2, *this, n); return r; }
+        Number operator-(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::su2, *this, n); return r; }
 
         // inplace
         Number operator+=(const Number & n)
         {
             regman.io1i1(*this, Cpu::OP::ad1, n);
+            return *this;
+        }
+        Number operator-=(const Number & n)
+        {
+            regman.io1i1(*this, Cpu::OP::su1, n);
             return *this;
         }
         Number operator*=(const Number & n)
@@ -357,11 +365,18 @@ void Cpu::instr(int o1, OP op, int i1, int i2)
     switch (op)
     {
         case OP::eq: regs[o1] = (regs[i1] == regs[i2]); break;
-        case OP::mu2: regs[o1] = (regs[i1] * regs[i2]); break;
-        case OP::ad1: regs[o1] += regs[i1]; break;
+        case OP::leq: regs[o1] = (regs[i1] <= regs[i2]); break;
+
         case OP::mu1: regs[o1] *= regs[i1]; break;
-        case OP::cp: regs[o1] = regs[i1]; break;
+        case OP::mu2: regs[o1] = (regs[i1] * regs[i2]); break;
+
+        case OP::ad1: regs[o1] += regs[i1]; break;
         case OP::ad2: regs[o1] = (regs[i1] + regs[i2]); break;
+
+        case OP::su1: regs[o1] -= regs[i1]; break;
+        case OP::su2: regs[o1] = (regs[i1] - regs[i2]); break;
+
+        case OP::cp: regs[o1] = regs[i1]; break;
         case OP::inc: ++regs[o1]; break;
         default:
             throw 279; // bad instruction
