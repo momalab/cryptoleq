@@ -11,7 +11,7 @@ using std::string;
 #endif
 
 #ifndef REG0
-#define REG0 1
+#define REG0 0
 #endif
 
 
