@@ -28,7 +28,7 @@ class Cpu
         // cannot be 0
 
         using Value = int;
-        enum class OP { eq, mu1, mu2, ad1, ad2, inc, cp, su1, su2, leq };
+        enum class OP { eq, mu1, mu2, ad1, ad2, inc, cp, su1, su2, leq, lsh, rsh, xo1 };
 
         void instr(int o1, OP op, int i1, int i2);
         void instr_load(int r, const Value & v)
@@ -163,6 +163,9 @@ class Number
         Number operator==(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::eq, *this, n); return r; }
         Number operator<=(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::leq, *this, n); return r; }
 
+        Number operator<<(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::lsh, *this, n); return r; }
+        Number operator>>(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::rsh, *this, n); return r; }
+
         Number operator*(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::mu2, *this, n); return r; }
         Number operator+(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::ad2, *this, n); return r; }
         Number operator-(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::su2, *this, n); return r; }
@@ -183,6 +186,8 @@ class Number
             regman.io1i1(*this, Cpu::OP::mu1, n);
             return *this;
         }
+
+        Number operator^=(const Number & n){ regman.io1i1(*this, Cpu::OP::xo1, n); return *this; }
 
         Number operator++() { regman.io1(*this, Cpu::OP::inc); return *this; }
         string str() const;
@@ -366,6 +371,11 @@ void Cpu::instr(int o1, OP op, int i1, int i2)
     {
         case OP::eq: regs[o1] = (regs[i1] == regs[i2]); break;
         case OP::leq: regs[o1] = (regs[i1] <= regs[i2]); break;
+
+        case OP::lsh: regs[o1] = (regs[i1] << regs[i2]); break;
+        case OP::rsh: regs[o1] = (regs[i1] >> regs[i2]); break;
+
+        case OP::xo1: regs[o1] ^= regs[i1]; break;
 
         case OP::mu1: regs[o1] *= regs[i1]; break;
         case OP::mu2: regs[o1] = (regs[i1] * regs[i2]); break;
