@@ -28,7 +28,7 @@ class Cpu
         // cannot be 0
 
         using Value = int;
-        enum class OP { eq, mul, ad1, ad2, inc, cp };
+        enum class OP { eq, mu1, mu2, ad1, ad2, inc, cp };
 
         void instr(int o1, OP op, int i1, int i2);
         void instr_load(int r, const Value & v)
@@ -161,13 +161,18 @@ class Number
     public:
         Number(int x = 0) : regidx(-1), val(x) {}
         Number operator==(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::eq, *this, n); return r; }
-        Number operator*(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::mul, *this, n); return r; }
+        Number operator*(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::mu2, *this, n); return r; }
         Number operator+(const Number & n) const { Number r; regman.o1i2(r, Cpu::OP::ad2, *this, n); return r; }
 
         // inplace
         Number operator+=(const Number & n)
         {
             regman.io1i1(*this, Cpu::OP::ad1, n);
+            return *this;
+        }
+        Number operator*=(const Number & n)
+        {
+            regman.io1i1(*this, Cpu::OP::mu1, n);
             return *this;
         }
 
@@ -179,9 +184,12 @@ class Number
         // copy and move semantics
         Number(Number & n): Number() { copy(*this, n); }
         Number operator=(const Number & n) { copy(*this, n); return *this; }
-        ///Number operator=(Number &&n) { copy(*this, n); return *this; }
         Number(Number &&);
         static void copy(Number & o, const Number & i); // cannot invoke copy-c-tor or ass-o-tor
+
+	// this is a ficticious function made to accommodate Edu's code
+	// it has to be deleted ASAP
+	static Number encrypt(Number x){ return x; }
 };
 
 // do not use this when debugging, because it may invoke modifications
@@ -349,8 +357,9 @@ void Cpu::instr(int o1, OP op, int i1, int i2)
     switch (op)
     {
         case OP::eq: regs[o1] = (regs[i1] == regs[i2]); break;
-        case OP::mul: regs[o1] = (regs[i1] * regs[i2]); break;
+        case OP::mu2: regs[o1] = (regs[i1] * regs[i2]); break;
         case OP::ad1: regs[o1] += regs[i1]; break;
+        case OP::mu1: regs[o1] *= regs[i1]; break;
         case OP::cp: regs[o1] = regs[i1]; break;
         case OP::ad2: regs[o1] = (regs[i1] + regs[i2]); break;
         case OP::inc: ++regs[o1]; break;
@@ -477,6 +486,7 @@ Number operator "" _E(unsigned long long int x)
     {
         case 12: return E(12);
         case 7: return E(7);
+        case 5: return E(5);
         case 1: return E(1);
         case 0: return E(0);
     }

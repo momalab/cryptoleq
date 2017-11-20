@@ -13,7 +13,7 @@ int mainz()
 	SecureInt i = (1_E);
 	SecureInt result = (0_E);
 
-	//asm("l.debug");
+	asm("l.debug");
 
 	int counter = 0;
 	do {
@@ -25,7 +25,7 @@ int mainz()
 	} while (++counter < MAX_NUM);
 	cout << "fib( " << num.str() << " ) = " << result.str() << "\n";
 
-	//asm("l.debug");
+	asm("l.debug");
 	return 0;
 }
 
