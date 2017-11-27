@@ -288,9 +288,9 @@ void Table::touch(int x1, int x2, int x3)
     const bool UnloadALWAYS = REG0;
     if ( UnloadALWAYS )
     {
-        if ( rocc[x1].pn ) regman.sync_detach(rocc[x1].pn, true);
-        if ( rocc[x2].pn ) regman.sync_detach(rocc[x2].pn, true);
-        if ( rocc[x3].pn ) regman.sync_detach(rocc[x3].pn, true);
+		if (rocc[x1].pn) { regman.sync_detach(rocc[x1].pn, true); free(x1); }
+		if (rocc[x2].pn) { regman.sync_detach(rocc[x2].pn, true); free(x2); }
+		if (rocc[x3].pn) { regman.sync_detach(rocc[x3].pn, true); free(x3); }
     }
 }
 
