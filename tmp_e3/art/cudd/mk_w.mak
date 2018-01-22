@@ -19,7 +19,9 @@ OPT=-WX -W4 -nologo -EHsc -Ox -D_CRT_SECURE_NO_DEPRECATE=1 /wd4355 /wd4127 /wd47
 
 OPTC=$(OPT)
 
-OPTCD=$(OPT) /wd4267
+OPTCD=$(OPT) /wd4244 /wd4204 /wd4245 /wd4018
+# Ze initialization with non constants
+# /wd4267 
 
 INC=-Ic30
 EEXT=.exe
