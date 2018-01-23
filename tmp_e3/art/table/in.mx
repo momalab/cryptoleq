@@ -1,7 +1,0 @@
-# this is a matrix producing truth table
-# 0 - variable is not present
-# 1 - variable is present
-# 2 - variable is present negative
-
-0012012
-0201102
