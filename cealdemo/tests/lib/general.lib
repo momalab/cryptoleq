@@ -1,0 +1,170 @@
+.pragma once
+
+# general constants
+. Z:0 # assumed to be always zero; clean up after use
+. _T:0 # no zero assumption; clean up before use
+. _o1:1 _om1:-1
+
+
+# # # #
+# mov #
+# # # #
+.def mov x y
+.clear  y
+.add    x y
+.end
+
+
+# # # #
+# add #
+# # # #
+.def add x y : Z
+        x Z; Z y; Z
+.end
+
+
+# # # # #
+# goto  #
+# # # # #
+.def goto x : Z
+        Z Z x
+.end
+
+
+# # # # #
+# clear #
+# # # # #
+.def clear x
+        x
+.end
+
+
+# # # # # #
+# minswp  #
+# # # # # #
+.def minswp x y : Z _T
+T=_T
+        T; x Z; Z T; Z; y T end
+        T; x Z; Z T; Z
+        x; y Z; Z x; Z
+        y; T Z; Z y; Z
+end:
+.end
+
+
+# # # #
+# inc #
+# # # #
+.def inc x : _om1
+        _om1 x
+.end
+
+
+# # # #
+# dec #
+# # # #
+.def dec x : _o1
+        _o1 x
+.end
+
+
+# # # # #
+# call  #
+# # # # #
+.def call start ret : Z
+        ?+8 Z; Z ret; Z Z start; .?; ret
+.end
+
+
+# # # # #
+# halt  #
+# # # # #
+.def halt : Z
+        Z Z (-1)
+.end
+
+
+# # # #
+# out #
+# # # #
+.def out x
+        x (-1)
+.end
+
+
+# # # # #
+# abs2  #
+# # # # #
+.def abs2 x y : Z
+        x Z geq
+        y; x y; Z Z end
+geq:    y; Z y; Z
+end:
+.end
+
+
+# # # # #
+# abs1  #
+# # # # #
+.def abs1 x : Z _T
+T=_T
+        x Z geq
+        T; Z T; x; T x
+geq:    Z
+.end
+
+
+# # # # #
+# outd  #
+# # # # #
+.def outd x
+._decr  x t
+        t (-1) e
+. t:0
+e:
+.end
+
+
+# # # # #
+# mov21 #
+# # # # #
+.def mov21 x y : Z
+.clear  y
+.mov    x z
+        z:0 Z; Z y; Z
+.end
+
+
+# # # # #
+# ifneq #
+# # # # #
+.def ifneq A B C
+.mov    A a
+        B a t
+.goto   C
+        t:a
+.add    B a
+        A a end
+.goto   C
+. a:0
+end:
+.end
+
+
+# # # # #
+# ifeq #
+# # # # #
+.def ifeq A B C
+.mov    A a
+        B a t
+.goto   end
+        t:a
+.add    B a
+        A a C
+.goto   end
+. a:0
+end:
+.end
+
+# # # # # # # # # # # # # # # # # #
+

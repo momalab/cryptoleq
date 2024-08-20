@@ -1,0 +1,5 @@
+.pragma cqtype=x
+a (-1) (-1)
+. 1.1 2.1 a: 3.3: 'a'
+
+# output x type but no N defined

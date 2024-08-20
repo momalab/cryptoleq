@@ -1,0 +1,13 @@
+.pragma N=107.101 r=5137 k=1 io=x incdir=../lib
+
+.__powerN x y
+.out    x
+.out    y
+
+.halt
+
+. x:~1 y:0
+
+.include "confy.lib"
+#.include "secure.lib"
+

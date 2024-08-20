@@ -1,0 +1,12 @@
+.pragma r=2 PQ=7.11 incdir=../lib
+start:
+.out    a
+.mov    b c
+.add    a c
+.mov    b a
+.mov    c b
+m1 counter start
+.halt
+. a:~1 b:~1 c:0
+. counter:-10 m1:-1
+.include "general.lib"

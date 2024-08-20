@@ -1,0 +1,10 @@
+.pragma PQ=17.11 r=2
+. a b c d e f
+. A B C D E F
+ . [a] A: "Opn addr, opn val"
+ { [b] B: "Sec addr, opn va" }
+~. [c] C: "Opn addr, sec v"
+ . [d] D:~"Opn addr, sec "
+~{ [e] E: "Sec addr, sec" }
+ { [f] F:~"Sec addr, se" }
+

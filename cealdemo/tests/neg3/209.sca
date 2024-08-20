@@ -1,0 +1,15 @@
+# autobits expect constant expression
+
+# testing power
+.pragma N=17.11 r=2 k=1 incdir=../lib
+
+._power a b c
+.out    c
+
+.halt
+
+. a:2 b:2 c:1
+
+.include "c_power.lib"
+.include "general.lib"
+

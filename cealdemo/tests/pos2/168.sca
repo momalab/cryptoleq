@@ -1,0 +1,25 @@
+# autobits
+
+.pragma io=a
+
+._autobits '1' bit0 bit1
+#._autobits $fkf() bit0 bit1
+Z Z (-1)
+
+. Z:0 A:"A" a0:'0' a1:'1' d:'.'
+
+.def both: d
+d (-1)
+.end
+
+.def bit0: a0
+a0 (-1)
+.both
+.end
+
+.def bit1: a1
+a1 (-1)
+.both
+.end
+
+

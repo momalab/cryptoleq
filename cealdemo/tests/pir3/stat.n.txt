@@ -1,0 +1,17 @@
+IP watch list { _G_start _omul_start _seq_start _smul_start }
+
+IP pass counters
+================
+_G_start[61908649]  = 81
+_omul_start[42412224]= 0
+_seq_start[116138705]= 0
+_smul_start[90103479]= 1
+
+Instruction stat
+================
+Input/Output   = 8
+Open           = 2491
+Secure         = 8981
+Mixed          = 5173
+----------------
+Total          = 16653

@@ -1,0 +1,7 @@
+# Cannot invert 0 - because $halfN is 0.something and $X takes t part
+
+.pragma N=107.101 r=2 k=1 io=ts
+
+
+. x:1 c:0 y:$X($halfN)
+

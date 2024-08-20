@@ -1,0 +1,8 @@
+.pragma io=a
+.aaa;.aaa;.aaa
+0 0 (-1)
+.def aaa
+a (-1) e
+. a:'a'
+e:
+.end

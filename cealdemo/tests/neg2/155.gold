@@ -1,0 +1,1 @@
+Error: (line 3:6 'aaa') (line 4:3 'b') Undeclared 'b' in macro definition

@@ -1,0 +1,37 @@
+# initial simple test
+
+.pragma PQ=7.11 k=5 r=17 u=3
+.pragma io=x
+
+OUT=-1
+HALT=-1
+
+# output initial encrypted values
+R0       OUT	# 2175 = 17^N mod N^2
+B2       OUT	# 1754 = [B2=8,R3=753,g=386,g^B2=3081] = R3*g^B2
+R3754    OUT	# 3754
+
+# output initial open values
+ozero  OUT	# 1
+oone   OUT	# 78 = 1+N
+otwo   OUT	# 155 = 1+2N
+oB2    OUT	# 617 = [8] = 1+8N
+obeta  OUT	# 232 = [3] = 1+3N
+obeta1 OUT	# 309 = [4] = 1+4N
+
+Z Z HALT
+
+# constants
+. Z:0 ozero:0 oone:1 otwo:2 oB2:$B2() obeta:$beta() obeta1:$beta()+1
+
+# initial rndN
+. R0:$peekrnd()
+
+# initialisation of secure constants
+. zero: ~0 one:~1 B2:~$B2() 
+
+# call to table
+. $random() #
+
+. R3754:$peekrnd()
+

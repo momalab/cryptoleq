@@ -1,0 +1,14 @@
+# testing power
+.pragma N=107.101 r=2 k=1 io=ts incdir=../lib
+
+._power  a $X(7) c
+.outd    c
+
+.halt
+
+. a:~3 c:1
+
+.include "c_power.lib"
+#.include "general.lib"
+.include "secure.lib"
+

@@ -1,0 +1,11 @@
+# leftover label on def
+
+.aaa
+
+bbb:;
+
+.def aaa
+0 0 (-1)
+.end
+
+

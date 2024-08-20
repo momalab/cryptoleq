@@ -1,0 +1,55 @@
+
+
+# # # # # # # # #
+# smul z=(x==y) #
+# # # # # # # # #
+
+
+# Macro to call function
+# # # # # # # # # # # # # # # # # #
+.def seq x y z : _seq_ret _seq_start _seq_x _seq_y _seq_z
+
+.mov    x _seq_x
+.mov    y _seq_y
+.call	_seq_start _seq_ret
+.mov    _seq_z z
+.end
+# # # # # # # # # # # # # # # # # #
+
+
+# Data members
+# # # # # # # # # # # # # # # # # #
+. _seq_z:0 _seq_x:0 _seq_y:0
+# # # # # # # # # # # # # # # # # #
+
+
+# Implementation
+# # # # # # # # # # # # # # # # # #
+.__seq_f
+# # # # # # # # # # # # # # # # # #
+
+
+# Definition
+# # # # # # # # # # # # # # # # # #
+.def __seq_f : _seq_z _seq_x _seq_y Z _seq_ret _seq_start _s1
+
+x=_seq_x
+y=_seq_y
+z=_seq_z
+. u:0 v:0 gu:0 gv:0
+
+_seq_start:
+.mov    _s1 z
+.mov    x u
+        y u
+        v; u v
+._G     u z gu
+._G     v z gv
+        gu z
+        gv z
+
+Z Z _seq_ret:0
+.end
+
+# # # # # # # # # # # # # # # # # #
+

@@ -1,0 +1,8 @@
+.abc 3
+.abc 5
+b:0 0 (-1)
+.def abc x
+p (-1) e
+. [z] [(x)]
+. p:z
+e:;.end

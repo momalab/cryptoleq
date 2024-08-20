@@ -1,0 +1,12 @@
+# 1 2 6 24 120 720 5040
+.pragma r=2 PQ=101.113 incdir=../lib sneak=10 beta=3
+start:
+.smul   x i x
+.outd   x
+.inc    stp
+        n i
+.ifneq  stp max start
+.halt
+. x:~1 i:~1 n:~-1 
+. stp:1 max:5
+.include "secure.lib"

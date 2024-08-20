@@ -1,0 +1,17 @@
+.pragma io=ts N=256
+
+OUT=-1
+HALT=-1
+
+._od2p2 R S
+.out    R
+.out    S
+
+.halt
+
+. R:64 S:'1'
+ 
+.include "general.lib"
+.include "o_d2p2.lib"
+.include "o_const.lib"
+

@@ -1,0 +1,10 @@
+.pragma io=a
+._autobits '5' bit0 bit1
+Z Z (-1)
+. Z:0 a:'0' b:'1'
+.def bit0: a
+a (-1)
+.end
+.def bit1: b
+b (-1)
+.end

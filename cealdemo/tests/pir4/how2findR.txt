@@ -1,0 +1,54 @@
+
+C:\[...]\ceal\tests\pir4>..\..\_bin_msc\ceal 404.sca -m
+> prn
+-> ;
+
+prn> P=239;
+239
+prn> Q=251;
+251
+prn> N=P*Q;
+59989
+prn> lam = lcm P-1 Q-1
+prn-> ;
+29750
+prn> factors lam;
+2,5,5,5,7,17
+prn> lam/5;
+5950
+prn> w=lam/5;
+5950
+prn> modulus=N;
+59989
+prn> ord 2^w;
+1
+prn> ord 3^w;
+5
+prn> 3^w;
+37046
+prn> q;
+
+========================
+
+> PQ=18299379327617480707,18345258783657292909;
+> lam= lcm PQ[0]-1 PQ[1]-1;
+> prn;
+
+prn> lam;
+55951141557575212439820719900480105508
+prn> factor lam/2;
+2
+prn> factor lam/4;
+3
+prn> factor lam/4/3;
+3
+prn> factor lam/4/9;
+47
+prn> w=lam/9;
+6216793506397245826646746655608900612
+prn> modulus=PQ[0]*PQ[1];
+335706849345451274675568957514155406663
+prn> 2^w, ord 2^w;
+158206486220048275739729787098738889401,9
+prn> q;
+

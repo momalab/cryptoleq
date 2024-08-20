@@ -1,0 +1,67 @@
+
+
+# # # # # # # #
+# cmul z=x*y  #
+# # # # # # # #
+
+
+# Macro to call function
+# # # # # # # # # # # # # # # # # #
+.def cmul x y z : _cmul_ret _cmul_start _cmul_x _cmul_y _cmul_z
+
+.mov    x _cmul_x
+.mov    y _cmul_y
+.call	_cmul_start _cmul_ret
+.mov    _cmul_z z
+.end
+# # # # # # # # # # # # # # # # # #
+
+
+# Data members
+# # # # # # # # # # # # # # # # # #
+. _cmul_z:0 _cmul_x:0 _cmul_y:0
+# # # # # # # # # # # # # # # # # #
+
+
+# Implementation
+# # # # # # # # # # # # # # # # # #
+.__cmul_f
+# # # # # # # # # # # # # # # # # #
+
+
+# Definition
+# # # # # # # # # # # # # # # # # #
+.def __cmul_f : _cmul_z _cmul_x _cmul_y Z _cmul_ret _cmul_start _s0 _o1 _beta1 _s1
+
+x=_cmul_x
+y=_cmul_y
+sum=_cmul_z
+. w:0 z:0 i:0
+
+_cmul_start:
+.mov    _s0 sum
+.mov    _beta1 i
+.inc    i
+
+loop:
+        _o1 i return
+#.out    i                        ## slow
+
+._buildc x w
+        Z w even
+        _s1 x
+.add    y sum
+even:
+._div2e x z
+
+.add    y y
+.mov    z x
+
+.goto   loop
+
+return:
+Z Z _cmul_ret:0
+.end
+
+# # # # # # # # # # # # # # # # # #
+

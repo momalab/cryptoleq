@@ -1,0 +1,9 @@
+# too big beta
+.pragma beta=10000 io=ts
+
+B2 (-1) (-1)
+
+. B2:$B2()
+
+
+

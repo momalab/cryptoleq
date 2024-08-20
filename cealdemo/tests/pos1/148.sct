@@ -1,0 +1,12 @@
+# simple macro
+. Z:0 0 b
+
+l1:l2:
+b: .abc (-1)
+. b
+
+.def abc x : Z
+Z Z x
+.end
+
+

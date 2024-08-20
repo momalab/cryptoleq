@@ -1,0 +1,12 @@
+# testing power
+.pragma N=107.11 r=2 k=1 io=ts incdir=../lib
+
+._div2e a c
+.out    c
+
+.halt
+
+. a:52 c:0
+
+.include "confy.lib"
+

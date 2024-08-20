@@ -1,0 +1,75 @@
+# multiplication test
+
+.pragma PQ=19.101 k=5 r=17 u=3
+.pragma io=ts
+
+OUT=-1
+HALT=-1
+
+#?-1 OUT	# 1 [0]
+#?-1 OUT # 5758 [3]
+
+# output initial encrypted values
+#R0     OUT	# 2963548 = 17^N mod N^2
+#B2     OUT	# 3216230 = R3*g^B2
+#R4     OUT	# 280370
+
+# output initial open values
+#ozero  OUT	# 1
+#oone   OUT	# 1920 = 1+N
+#otwo   OUT	# 3839 = 1+2N
+#oB2    OUT	# 491265 = [256] = 1+256N
+#obeta  OUT	# 15353 = [8] = 1+8N
+#obeta1 OUT	# 17272 = [9] = 1+9N
+
+
+# mutliply 2x2
+otwo Z; Z open_mul_x; Z open_mul_y; Z
+?+8 Z; Z open_mul_ret; Z Z open_mul_start; .?
+open_mul_ret; open_mul_z Z; Z o4; Z
+open_mul_z
+
+o4 OUT
+
+Z Z HALT
+
+# constants
+. Z:0 ozero:0 oone:1 otwo:2 oB2:$B2() obeta:$beta() obeta1:$beta()+1
+
+# calculations
+. o4:0 o16:0
+
+# ------------------------------------------------------------------
+
+# initial rndN
+. R0:$peekrnd()
+
+# initialisation of secure constants
+. zero: ~0 one:~1 B2:~$B2() 
+
+# call to table
+. $random() #
+
+. R4:$peekrnd()
+
+# ------------------------------------------------------------------
+
+# Library
+
+# 
+# open_mul z=x*y
+#
+
+# arguments and result
+. open_mul_z:0 open_mul_x:0 open_mul_y:0
+open_mul_start:
+
+open_mul_z;
+open_mul_x Z; Z open_mul_z; Z
+open_mul_y Z; Z open_mul_z; Z
+
+# clear arguments
+open_mul_x; open_mul_y;
+
+# return
+Z Z open_mul_ret:0

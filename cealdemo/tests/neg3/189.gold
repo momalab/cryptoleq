@@ -1,0 +1,1 @@
+Error: (line 1:1 'B') (line 2:6 '[') Labels cannot be used in front of array size variables

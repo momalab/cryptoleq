@@ -1,0 +1,66 @@
+
+
+# # # # # # # #
+# smul z=x*y  #
+# # # # # # # #
+
+
+# Macro to call function
+# # # # # # # # # # # # # # # # # #
+.def smul x y z : _smul_ret _smul_start _smul_x _smul_y _smul_z
+
+.mov    x _smul_x
+.mov    y _smul_y
+.call	_smul_start _smul_ret
+.mov    _smul_z z
+.end
+# # # # # # # # # # # # # # # # # #
+
+
+# Data members
+# # # # # # # # # # # # # # # # # #
+. _smul_z:0 _smul_x:0 _smul_y:0
+# # # # # # # # # # # # # # # # # #
+
+
+# Implementation
+# # # # # # # # # # # # # # # # # #
+.__smul_f
+# # # # # # # # # # # # # # # # # #
+
+
+# Definition
+# # # # # # # # # # # # # # # # # #
+.def __smul_f : _smul_z _smul_x _smul_y Z _smul_ret _smul_start _s0 _o1 _beta1
+
+x=_smul_x
+y=_smul_y
+sum=_smul_z
+. w:0 b:0 i:0
+
+_smul_start:
+.mov    _s0 sum
+.mov    _beta1 i
+.inc    i
+
+loop:
+        _o1 i return
+#.out    i                        ## slow
+._sd2   x w
+.mov    x b; w b; w b
+
+        # now b is either 0 or 1
+._G     b y b
+.add    b sum
+
+.add    y y
+.mov    w x
+
+.goto   loop
+
+return:
+Z Z _smul_ret:0
+.end
+
+# # # # # # # # # # # # # # # # # #
+

@@ -1,0 +1,17 @@
+# definitions inside macros
+
+.pragma io=a
+
+.aaa
+.aaa
+.aaa
+Z Z (-1)
+
+. Z:0 A:"A"
+
+.def aaa : A
+B=A
+B (-1)
+.end
+
+

@@ -1,0 +1,72 @@
+# multiplication test
+
+.pragma PQ=29.101 k=5 r=17
+.pragma io=ts incdir=../lib/
+
+# output initial encrypted values
+#.out    R0      # 2106664 = 17^N mod N^2
+#.out    szero   # 317.1651
+#.out    sB2     # 2812.2813
+#.out    R4      # 280370
+
+#.out    db_size
+#.outd    input
+
+.mov    szero   sum
+
+start:
+.mov21  p key
+.inc    p
+.mov21  p val
+.inc    p
+.dec    db_size
+.dec    db_size
+
+.seq    key input x
+.smul   x val y
+.add    y sum
+
+#.outd   key
+#.outd   val
+.out    sum
+
+.ifneq  db_size ozero start
+
+.out    sum
+.outd   sum
+
+.halt
+
+. sum:0 key:0 val:0 p:db_start x:0 y:0
+
+# data
+db_start:
+.include datax "db1.sec"
+db_end:
+
+input:;.include datax "input1.sec"
+
+db_size: db_end-db_start
+
+# constants
+. ozero:0 oone:1 otwo:2 oB2:$B2() obeta:$beta() obeta1:$beta()+1
+
+# calculations
+. o4:0 o16:0 s4:0 s16:0
+
+# ------------------------------------------------------------------
+
+# initial rndN
+. R0:$peekrnd()
+
+# initialisation of secure constants
+. szero: ~0 sone:~1 sB2:~$B2() 
+
+# call to table
+. $random() #
+
+. R4:$peekrnd()
+
+# ------------------------------------------------------------------
+
+.include "secure.lib"

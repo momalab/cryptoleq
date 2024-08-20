@@ -1,0 +1,46 @@
+
+# # # # # # # # # # # # # # # # # #
+# sd2 function
+# divides x by 2
+# input Enc x
+# output Enc x/2
+# # # # # # # # # # # # # # # # # #
+
+
+.def _sd2 x res: Z _o1 _beta1 _T _s1
+
+.clear  negs
+.mov    _beta1 i
+.mov    _beta1 j
+.dec    j
+
+loop:
+.dec    j
+        _o1 i end
+
+._sd22t j p2
+
+        # y = sum + p2
+        y; negs y
+        p2 Z; Z y; Z
+
+        # y += y
+        y Z; Z y; Z
+
+        # y -= x
+        x y
+
+.mov    _s1 _T
+        y _T
+
+._G     _T p2 y
+
+        y negs
+.goto   loop
+
+. p2:0 i:0 j:0 y:0 negs:0
+end:
+        res; negs res
+.end
+
+# # # # # # # # # # # # # # # # # #

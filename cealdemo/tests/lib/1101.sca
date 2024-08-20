@@ -1,0 +1,15 @@
+# multiplication
+.pragma io=ts beta=10
+# PQ=17.11
+
+OUT=-1
+HALT=-1
+
+.omul t7 t10 R
+R OUT HALT
+
+. R:'z' t10:10 t7:70
+ 
+#.include "general.lib"
+.include "open.lib"
+

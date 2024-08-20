@@ -1,0 +1,11 @@
+.pragma io=a incdir=../lib
+.mov    B p
+start:
+.mov21  p a
+.out    a
+.inc    p
+.ifneq  p E start
+.halt
+. p:0 y:0 B:H a:0
+. H: "Hello, World!" E:E 
+.include "general.lib"

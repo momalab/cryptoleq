@@ -1,0 +1,12 @@
+# empty program
+
+.aaa
+
+.def aaa
+.bbb b
+b:
+.end
+
+.def bbb x
+.end
+

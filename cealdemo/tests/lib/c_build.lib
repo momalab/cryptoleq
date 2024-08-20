@@ -1,0 +1,45 @@
+
+# # # # # # # # # # # # # # # # # #
+# buildc function
+# returns cx (see Parity method) 
+# input x
+# output cx
+#
+# NB: So far Table requires c1=0 because BuildC does not
+#     implement c1 multiplication. This is because _table
+#     requires const expressions. Defines do not work
+#     because macro resolution goes before move_defs.
+#     Possible solution: split macro resolution in two parts:
+#     (1) resolve macros except _autobits and _table 
+#     (2) move_defs (3) resolve _autobits and _table
+#
+#     Currently the effect of c1=0 is that table occupies
+#     address 0, so program must start from another address.
+#     This is not nice.
+#
+# # # # # # # # # # # # # # # # # #
+
+
+# Take to power N
+# # # # # # # # # # # # # # # # # #
+
+.def __powerN x y
+._power  x $halfN y
+.add    y y
+.add    x y
+.end
+
+# # # # # # # # # # # # # # # # # #
+
+
+# BuildC
+# # # # # # # # # # # # # # # # # #
+
+.def _buildc x c : Z
+.__powerN x y
+.mov    x c      
+#       y:0 c # FIXME: improve performance by inverting table output
+        y:0 Z; Z c; Z
+.end
+
+# # # # # # # # # # # # # # # # # #

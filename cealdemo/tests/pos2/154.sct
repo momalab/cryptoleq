@@ -1,0 +1,12 @@
+.def aaa
+a: a 0 (-1)
+.bbb a
+.end
+
+.aaa
+
+.def bbb x
+.end
+
+
+

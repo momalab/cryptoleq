@@ -1,0 +1,73 @@
+
+
+# # # # # # # # #
+# smul z=(x==y) #
+# # # # # # # # #
+
+
+# Macro to call function
+# # # # # # # # # # # # # # # # # #
+.def ceq x y z : _ceq_ret _ceq_start _ceq_x _ceq_y _ceq_z
+
+.mov    x _ceq_x
+.mov    y _ceq_y
+.call	_ceq_start _ceq_ret
+.mov    _ceq_z z
+.end
+# # # # # # # # # # # # # # # # # #
+
+
+# Data members
+# # # # # # # # # # # # # # # # # #
+. _ceq_z:0 _ceq_x:0 _ceq_y:0
+# # # # # # # # # # # # # # # # # #
+
+
+# Implementation
+# # # # # # # # # # # # # # # # # #
+.__ceq_f
+# # # # # # # # # # # # # # # # # #
+
+
+# Definition
+# # # # # # # # # # # # # # # # # #
+.def __ceq_f : _ceq_z _ceq_x _ceq_y Z _ceq_ret _ceq_start _s1 _beta _o1 _s0
+
+x=_ceq_x
+y=_ceq_y
+z=_ceq_z
+. i:0 w:0 u:0 cw:0
+
+_ceq_start:
+
+.mov    _s1 z
+.mov    _beta i
+.inc    i
+
+.mov    x w
+        y w
+
+loop:
+        _o1 i return
+#.out    i                        ## slow
+
+._buildc w cw
+        Z cw even
+
+.mov    _s0 z
+.goto   return
+
+even:
+._div2e w u
+.mov    u w
+
+.goto   loop
+
+# FIXME later - check (-w)
+
+return:
+Z Z _ceq_ret:0
+.end
+
+# # # # # # # # # # # # # # # # # #
+
